@@ -15,24 +15,20 @@ import { createPrintifyProduct } from "@/lib/services/printify-product";
 export async function executeCreateShirtWorkflow(
   input: TCreateShirt,
   jobId: string,
+  imageProvider: "google" | "openai" = "google",
 ): Promise<ShirtWorkflowResult> {
-  console.log(`🎯 Starting shirt workflow for job ${jobId}`);
-
   try {
-    // Step 1: Generate image and title using AI
-    console.log("Step 1/3: Generating image and title...");
-    const { imageUrl, title } = await generateShirtDesign(input.prompt);
+    const { imageUrl, title } = await generateShirtDesign(
+      input.prompt,
+      imageProvider,
+    );
 
-    // Step 2: Create product in Printify
-    console.log("Step 2/3: Creating Printify product...");
     const product = await createPrintifyProduct({
       imageUrl,
-      title, // LLM-generated title
-      description: input.prompt, // Original prompt as description
+      title,
+      description: input.prompt,
     });
 
-    // Step 3: Create and submit order
-    console.log("Step 3/3: Creating order...");
     const order = await createPrintifyOrder({
       productId: product.id,
       variantId: product.variants[0].id,
@@ -40,10 +36,7 @@ export async function executeCreateShirtWorkflow(
       addressTo: input.address_to,
     });
 
-    // Submit to production
     await submitPrintifyOrder(order.id);
-
-    console.log(`✅ Workflow completed successfully for job ${jobId}`);
 
     return {
       success: true,
@@ -51,10 +44,10 @@ export async function executeCreateShirtWorkflow(
       imageUrl,
       productId: product.id,
       orderId: order.id,
-      trackingInfo: null, // Will be updated later
+      trackingInfo: null,
     };
   } catch (error) {
-    console.error(`❌ Workflow failed for job ${jobId}:`, error);
+    console.error(`[Workflow] Error for job ${jobId}:`, error);
 
     return {
       success: false,

@@ -32,7 +32,7 @@ export async function createPrintifyOrder(params: {
   // });
   // return response.json();
 
-  console.log("📦 Creating Printify order:", {
+  console.log("[Printify Order] Creating order:", {
     productId: params.productId,
     variantId: params.variantId,
     quantity: params.quantity,
@@ -65,7 +65,7 @@ export async function createPrintifyOrder(params: {
     created_at: new Date().toISOString(),
   };
 
-  console.log("✅ Printify order created:", dummyOrder.id);
+  console.log("[Printify Order] Successfully created order:", dummyOrder.id);
   return dummyOrder;
 }
 
@@ -81,9 +81,9 @@ export async function submitPrintifyOrder(orderId: string): Promise<void> {
   //   },
   // });
 
-  console.log("🚀 Submitting order to production:", orderId);
+  console.log("[Printify Order] Submitting order to production:", orderId);
   await new Promise((resolve) => setTimeout(resolve, 500));
-  console.log("✅ Order submitted to production");
+  console.log("[Printify Order] Successfully submitted order to production");
 }
 
 // Printify Order Types

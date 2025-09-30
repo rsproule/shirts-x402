@@ -111,9 +111,8 @@ export function CreateShirtForm() {
       <div className="w-full max-w-2xl space-y-6">
         {/* Header */}
         <div className="text-center space-y-2">
-          <h1 className="text-4xl font-bold tracking-tight">ShirtSlop</h1>
           <p className="text-muted-foreground">
-            Create custom AI-generated shirts • $0.01 per order
+            Create custom AI-generated shirts • $25.00 per order
           </p>
         </div>
 

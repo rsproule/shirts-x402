@@ -30,7 +30,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} flex h-screen flex-col antialiased`}
       >
         <Providers>
-          <Header title="Echo Chat" />
+          <Header title="x402 Shirt" />
           <div className="min-h-0 flex-1">{children}</div>
         </Providers>
       </body>

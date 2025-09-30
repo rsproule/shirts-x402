@@ -31,7 +31,7 @@ export async function createPrintifyProduct(params: {
   // });
   // return response.json();
 
-  console.log("👕 Creating Printify product:", {
+  console.log("[Printify Product] Creating product:", {
     imageUrl: params.imageUrl,
     title: params.title,
   });
@@ -62,7 +62,7 @@ export async function createPrintifyProduct(params: {
     ],
   };
 
-  console.log("✅ Printify product created:", dummyProduct.id);
+  console.log("[Printify Product] Successfully created product:", dummyProduct.id);
   return dummyProduct;
 }
 
@@ -82,10 +82,10 @@ export async function uploadImageToPrintify(imageUrl: string): Promise<string> {
   // const data = await response.json();
   // return data.id;
 
-  console.log("📤 Uploading image to Printify:", imageUrl);
+  console.log("[Printify Product] Uploading image to Printify:", imageUrl);
   await new Promise((resolve) => setTimeout(resolve, 500));
   const uploadId = `img_${Date.now()}`;
-  console.log("✅ Image uploaded:", uploadId);
+  console.log("[Printify Product] Successfully uploaded image:", uploadId);
   return uploadId;
 }
 

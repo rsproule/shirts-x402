@@ -1,7 +1,7 @@
-import { EchoAccount } from '@/components/echo-account-next';
-import { isSignedIn } from '@/echo';
-import { ConnectWallet } from '@/app/_components/x402/ConnectWallet';
-import type { FC } from 'react';
+import { EchoAccount } from "@/components/echo-account-next";
+import { isSignedIn } from "@/echo";
+import { ConnectWallet } from "@/app/_components/x402/ConnectWallet";
+import type { FC } from "react";
 
 interface HeaderProps {
   title?: string;
@@ -9,11 +9,9 @@ interface HeaderProps {
 }
 
 const Header: FC<HeaderProps> = async ({
-  title = 'My App',
-  className = '',
+  title = "My App",
+  className = "",
 }) => {
-  const signedIn = await isSignedIn();
-
   return (
     <header
       className={`border-gray-200 border-b bg-white shadow-sm ${className}`}
@@ -25,7 +23,7 @@ const Header: FC<HeaderProps> = async ({
           </div>
 
           <nav className="flex items-center space-x-4">
-            {/* <EchoAccount /> */}
+            <EchoAccount />
             <ConnectWallet />
           </nav>
         </div>
