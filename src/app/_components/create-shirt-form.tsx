@@ -20,9 +20,14 @@ import { useState } from "react";
 import { useWalletClient } from "wagmi";
 import { Signer, wrapFetchWithPayment } from "x402-fetch";
 
+type Mode = "prompt" | "image";
+
 export function CreateShirtForm() {
   const { data: walletClient } = useWalletClient();
   const [isEditingAddress, setIsEditingAddress] = useState(false);
+  const [mode, setMode] = useState<Mode>("prompt");
+  const [imageFile, setImageFile] = useState<string>("");
+  const [imageUrl, setImageUrl] = useState("");
 
   const [formData, setFormData] = useState({
     prompt: "",
@@ -40,23 +45,19 @@ export function CreateShirtForm() {
     zip: "11249",
   });
 
-  // Type-safe mutation with TanStack Query
+  // Type-safe mutation for prompt-based shirts
   const createShirtMutation = useMutation({
     mutationFn: async (data: TCreateShirt) => {
       if (!walletClient) {
         throw new Error("Wallet not connected");
       }
 
-      // Validate input with Zod before sending
       const validated = CreateShirtBody.parse(data);
-
-      // Create payment-wrapped fetch
       const paymentFetch = wrapFetchWithPayment(
         fetch,
         walletClient as unknown as Signer,
-      ); // coinbase bricked their viem versions here
+      );
 
-      // Make typed API call
       const response = await paymentFetch("/api/shirts", {
         method: "POST",
         headers: {
@@ -67,7 +68,6 @@ export function CreateShirtForm() {
 
       const result = await response.json();
 
-      // Type-safe response handling
       if (response.ok && response.status === 200) {
         return result as TShirtJob;
       } else {
@@ -76,37 +76,129 @@ export function CreateShirtForm() {
     },
   });
 
+  // Type-safe mutation for image-based shirts
+  const createShirtFromImageMutation = useMutation({
+    mutationFn: async (data: {
+      imageUrl: string;
+      size: string;
+      color: string;
+      address_to: any;
+    }) => {
+      if (!walletClient) {
+        throw new Error("Wallet not connected");
+      }
+
+      const paymentFetch = wrapFetchWithPayment(
+        fetch,
+        walletClient as unknown as Signer,
+      );
+
+      const response = await paymentFetch("/api/shirts/from-image", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+      const result = await response.json();
+
+      if (response.ok && response.status === 200) {
+        return result as TShirtJob;
+      } else {
+        throw result;
+      }
+    },
+  });
+
+  const handleImageFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImageFile(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleImageDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    const file = e.dataTransfer.files?.[0];
+    if (file && file.type.startsWith("image/")) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImageFile(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handlePaste = (e: React.ClipboardEvent) => {
+    const items = e.clipboardData.items;
+    for (let i = 0; i < items.length; i++) {
+      if (items[i].type.startsWith("image/")) {
+        const file = items[i].getAsFile();
+        if (file) {
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            setImageFile(reader.result as string);
+          };
+          reader.readAsDataURL(file);
+        }
+      }
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Type-safe input
-    const payload: TCreateShirt = {
-      prompt: formData.prompt,
-      size: formData.size as
-        | "S"
-        | "M"
-        | "L"
-        | "XL"
-        | "2XL"
-        | "3XL"
-        | "4XL"
-        | "5XL",
-      color: formData.color as "Black" | "White",
-      address_to: {
-        first_name: formData.first_name,
-        last_name: formData.last_name,
-        email: formData.email,
-        phone: formData.phone || undefined,
-        country: formData.country,
-        region: formData.region,
-        address1: formData.address1,
-        address2: formData.address2,
-        city: formData.city,
-        zip: formData.zip,
-      },
+    const addressPayload = {
+      first_name: formData.first_name,
+      last_name: formData.last_name,
+      email: formData.email,
+      phone: formData.phone || undefined,
+      country: formData.country,
+      region: formData.region,
+      address1: formData.address1,
+      address2: formData.address2,
+      city: formData.city,
+      zip: formData.zip,
     };
 
-    createShirtMutation.mutate(payload);
+    if (mode === "prompt") {
+      // Prompt-based creation
+      const payload: TCreateShirt = {
+        prompt: formData.prompt,
+        size: formData.size as
+          | "S"
+          | "M"
+          | "L"
+          | "XL"
+          | "2XL"
+          | "3XL"
+          | "4XL"
+          | "5XL",
+        color: formData.color as "Black" | "White",
+        address_to: addressPayload,
+      };
+      createShirtMutation.mutate(payload);
+    } else {
+      // Image-based creation
+      const finalImageUrl = imageFile || imageUrl;
+      if (!finalImageUrl) {
+        alert("Please provide an image");
+        return;
+      }
+
+      const payload = {
+        imageUrl: finalImageUrl,
+        size: formData.size,
+        color: formData.color,
+        address_to: addressPayload,
+      };
+      createShirtFromImageMutation.mutate(payload);
+    }
   };
 
   const handleChange = (
@@ -132,30 +224,113 @@ export function CreateShirtForm() {
         <Card className="shadow-lg">
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Prompt Section */}
-              <div className="space-y-2">
-                <label
-                  htmlFor="prompt"
-                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+              {/* Mode Toggle */}
+              <div className="flex gap-2 p-1 bg-muted rounded-lg">
+                <button
+                  type="button"
+                  onClick={() => setMode("prompt")}
+                  className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
+                    mode === "prompt"
+                      ? "bg-background shadow-sm"
+                      : "text-muted-foreground hover:text-foreground"
+                  }`}
                 >
-                  Design Prompt
-                </label>
-                <Textarea
-                  id="prompt"
-                  name="prompt"
-                  value={formData.prompt}
-                  onChange={handleChange}
-                  placeholder="e.g., minimalist line art of a peregrine falcon in flight, black and white"
-                  required
-                  minLength={10}
-                  maxLength={4000}
-                  rows={3}
-                  className="resize-none"
-                />
-                <p className="text-xs text-muted-foreground">
-                  10-4000 characters
-                </p>
+                  AI Prompt
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setMode("image")}
+                  className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
+                    mode === "image"
+                      ? "bg-background shadow-sm"
+                      : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  Your Image
+                </button>
               </div>
+
+              {/* Prompt Section */}
+              {mode === "prompt" ? (
+                <div className="space-y-2">
+                  <label
+                    htmlFor="prompt"
+                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                  >
+                    Design Prompt
+                  </label>
+                  <Textarea
+                    id="prompt"
+                    name="prompt"
+                    value={formData.prompt}
+                    onChange={handleChange}
+                    placeholder="e.g., minimalist line art of a peregrine falcon in flight, black and white"
+                    required
+                    minLength={10}
+                    maxLength={4000}
+                    rows={3}
+                    className="resize-none"
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    10-4000 characters
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  <label className="text-sm font-medium">Upload Image</label>
+
+                  {/* Drag & Drop Zone */}
+                  <div
+                    onDrop={handleImageDrop}
+                    onDragOver={(e) => e.preventDefault()}
+                    onPaste={handlePaste}
+                    className="border-2 border-dashed rounded-lg p-8 text-center hover:border-primary transition-colors cursor-pointer"
+                  >
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageFile}
+                      className="hidden"
+                      id="image-upload"
+                    />
+                    <label htmlFor="image-upload" className="cursor-pointer">
+                      <div className="space-y-2">
+                        <div className="text-muted-foreground">
+                          Drag & drop, paste, or click to upload
+                        </div>
+                        <div className="text-xs text-muted-foreground">
+                          Supports PNG, JPG, GIF
+                        </div>
+                      </div>
+                    </label>
+                  </div>
+
+                  {/* Or Image URL */}
+                  <div className="space-y-2">
+                    <label htmlFor="imageUrl" className="text-sm font-medium">
+                      Or paste image URL
+                    </label>
+                    <Input
+                      id="imageUrl"
+                      value={imageUrl}
+                      onChange={(e) => setImageUrl(e.target.value)}
+                      placeholder="https://example.com/image.png"
+                    />
+                  </div>
+
+                  {/* Preview */}
+                  {(imageFile || imageUrl) && (
+                    <div className="border rounded-lg p-4 bg-muted">
+                      <p className="text-sm font-medium mb-2">Preview:</p>
+                      <img
+                        src={imageFile || imageUrl}
+                        alt="Preview"
+                        className="w-full max-w-sm rounded border"
+                      />
+                    </div>
+                  )}
+                </div>
+              )}
 
               {/* Size and Color Selection */}
               <div className="grid grid-cols-2 gap-4">
@@ -467,11 +642,19 @@ export function CreateShirtForm() {
               {/* Submit Button */}
               <Button
                 type="submit"
-                disabled={createShirtMutation.isPending}
+                disabled={
+                  mode === "prompt"
+                    ? createShirtMutation.isPending
+                    : createShirtFromImageMutation.isPending
+                }
                 className="w-full"
                 size="lg"
               >
-                {createShirtMutation.isPending ? (
+                {(
+                  mode === "prompt"
+                    ? createShirtMutation.isPending
+                    : createShirtFromImageMutation.isPending
+                ) ? (
                   <>
                     <svg
                       className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
@@ -496,7 +679,7 @@ export function CreateShirtForm() {
                     Processing Payment...
                   </>
                 ) : (
-                  "Create Shirt • $0.01"
+                  "Create Shirt • $25.00"
                 )}
               </Button>
             </form>
@@ -504,7 +687,12 @@ export function CreateShirtForm() {
         </Card>
 
         {/* Success Result */}
-        {createShirtMutation.isSuccess && createShirtMutation.data && (
+        {((mode === "prompt" &&
+          createShirtMutation.isSuccess &&
+          createShirtMutation.data) ||
+          (mode === "image" &&
+            createShirtFromImageMutation.isSuccess &&
+            createShirtFromImageMutation.data)) && (
           <Card className="border-green-500 bg-green-50 dark:bg-green-950">
             <CardHeader>
               <CardTitle className="text-green-900 dark:text-green-100">
@@ -515,67 +703,87 @@ export function CreateShirtForm() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="space-y-3">
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-muted-foreground">Job ID:</span>
-                  <code className="font-mono text-xs">
-                    {createShirtMutation.data.id}
-                  </code>
-                </div>
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-muted-foreground">Status:</span>
-                  <span className="font-medium capitalize">
-                    {createShirtMutation.data.status}
-                  </span>
-                </div>
-                {createShirtMutation.data.imageUrl && (
-                  <div className="space-y-2">
-                    <span className="text-muted-foreground text-sm">
-                      Design:
-                    </span>
-                    <img
-                      src={createShirtMutation.data.imageUrl}
-                      alt="Shirt design"
-                      className="w-full rounded-lg border"
-                    />
+              {(() => {
+                const data =
+                  mode === "prompt"
+                    ? createShirtMutation.data
+                    : createShirtFromImageMutation.data;
+                if (!data) return null;
+
+                return (
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-muted-foreground">Job ID:</span>
+                      <code className="font-mono text-xs">{data.id}</code>
+                    </div>
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-muted-foreground">Status:</span>
+                      <span className="font-medium capitalize">
+                        {data.status}
+                      </span>
+                    </div>
+                    {data.imageUrl && (
+                      <div className="space-y-2">
+                        <span className="text-muted-foreground text-sm">
+                          Design:
+                        </span>
+                        <img
+                          src={data.imageUrl}
+                          alt="Shirt design"
+                          className="w-full rounded-lg border"
+                        />
+                      </div>
+                    )}
+                    {data.productId && (
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-muted-foreground">
+                          Product ID:
+                        </span>
+                        <code className="font-mono text-xs">
+                          {data.productId}
+                        </code>
+                      </div>
+                    )}
+                    {data.orderId && (
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-muted-foreground">Order ID:</span>
+                        <code className="font-mono text-xs">
+                          {data.orderId}
+                        </code>
+                      </div>
+                    )}
                   </div>
-                )}
-                {createShirtMutation.data.productId && (
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">Product ID:</span>
-                    <code className="font-mono text-xs">
-                      {createShirtMutation.data.productId}
-                    </code>
-                  </div>
-                )}
-                {createShirtMutation.data.orderId && (
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">Order ID:</span>
-                    <code className="font-mono text-xs">
-                      {createShirtMutation.data.orderId}
-                    </code>
-                  </div>
-                )}
-              </div>
+                );
+              })()}
             </CardContent>
           </Card>
         )}
 
         {/* Error Result */}
-        {createShirtMutation.isError && (
+        {(createShirtMutation.isError ||
+          createShirtFromImageMutation.isError) && (
           <Card className="border-red-500 bg-red-50 dark:bg-red-950">
             <CardHeader>
               <CardTitle className="text-red-900 dark:text-red-100">
                 ✕ Error
               </CardTitle>
               <CardDescription>
-                {(createShirtMutation.error as any)?.error?.message ||
-                  "An error occurred"}
+                {(
+                  (mode === "prompt"
+                    ? createShirtMutation.error
+                    : createShirtFromImageMutation.error) as any
+                )?.error?.message || "An error occurred"}
               </CardDescription>
             </CardHeader>
             <CardContent>
               <pre className="text-xs overflow-auto p-4 bg-red-100 dark:bg-red-900/50 rounded">
-                {JSON.stringify(createShirtMutation.error, null, 2)}
+                {JSON.stringify(
+                  mode === "prompt"
+                    ? createShirtMutation.error
+                    : createShirtFromImageMutation.error,
+                  null,
+                  2,
+                )}
               </pre>
             </CardContent>
           </Card>
