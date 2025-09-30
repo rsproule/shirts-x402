@@ -46,11 +46,16 @@ export async function uploadImageToPrintify(imageUrl: string): Promise<string> {
     });
 
     return result.id;
-  } catch (error) {
+  } catch (error: any) {
     console.error("[Printify] Upload error:", error);
+    console.error("[Printify] Upload error details:", {
+      message: error?.message,
+      response: error?.response?.data,
+      status: error?.response?.status,
+    });
     throw new Error(
       `Failed to upload image: ${
-        error instanceof Error ? error.message : "Unknown error"
+        error instanceof Error ? error.message : JSON.stringify(error)
       }`,
     );
   }
@@ -109,7 +114,7 @@ export async function createPrintifyProduct(params: {
     await publishPrintifyProduct(product.id);
 
     return product as PrintifyProduct;
-  } catch (error) {
+  } catch (error: any) {
     console.error("[Printify] Product creation error:", error);
     throw new Error(
       `Failed to create product: ${

@@ -1,22 +1,22 @@
 import { AddressTo } from "@/lib/contracts/shirt";
-import { createPrintifyOrder } from "@/lib/services/printify-order";
+import { createDirectPrintifyOrder } from "@/lib/services/printify-order";
 import { NextRequest, NextResponse } from "next/server";
 
 /**
- * Test endpoint for Printify order creation
- * POST /api/test/printify-order
- * Body: { productId: string, variantId: number, quantity: number, address_to: TAddressTo }
+ * Test endpoint for direct Printify order (skip product creation)
+ * POST /api/test/direct-order
+ * Body: { imageUrl: string, size?: string, color?: string, variantId?: number, quantity: number, address_to: TAddressTo }
  */
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { productId, variantId, quantity, address_to } = body;
+    const { imageUrl, size, color, variantId, quantity, address_to } = body;
 
-    if (!productId || !variantId || !quantity || !address_to) {
+    if (!imageUrl || !quantity || !address_to) {
       return NextResponse.json(
         {
           ok: false,
-          error: "productId, variantId, quantity, and address_to are required",
+          error: "imageUrl, quantity, and address_to are required",
         },
         { status: 400 },
       );
@@ -37,9 +37,11 @@ export async function POST(req: NextRequest) {
 
     const startTime = Date.now();
 
-    // Create and submit order (submit does both in one call)
-    const order = await createPrintifyOrder({
-      productId,
+    // Create direct order (skips product creation)
+    const order = await createDirectPrintifyOrder({
+      imageUrl,
+      size,
+      color,
       variantId,
       quantity,
       addressTo: addressValidation.data,
@@ -62,17 +64,18 @@ export async function POST(req: NextRequest) {
         metadata: {
           duration: `${duration}ms`,
           timestamp: new Date().toISOString(),
+          mode: "direct_order_skip_publish",
         },
       },
       { status: 200 },
     );
   } catch (error: any) {
-    console.error("[Test] Order creation test failed:", error);
+    console.error("[Test] Direct order test failed:", error);
 
     return NextResponse.json(
       {
         ok: false,
-        error: error.message || "Order creation failed",
+        error: error.message || "Direct order creation failed",
         stack: process.env.NODE_ENV === "development" ? error.stack : undefined,
       },
       { status: 500 },

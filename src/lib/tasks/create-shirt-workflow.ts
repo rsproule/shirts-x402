@@ -1,48 +1,68 @@
 import type { TCreateShirt } from "@/lib/contracts/shirt";
 import { generateShirtDesign } from "@/lib/services/image-generation";
 import {
+  createDirectPrintifyOrder,
   createPrintifyOrder,
-  submitPrintifyOrder,
 } from "@/lib/services/printify-order";
 import { createPrintifyProduct } from "@/lib/services/printify-product";
 
 /**
  * Complete workflow for creating a shirt
  * 1. Generate image and title from prompt using LLM
- * 2. Create product in Printify
- * 3. Create order for the product
+ * 2a. (skip_publish=false) Create product in Printify, publish, then order
+ * 2b. (skip_publish=true) Submit order directly with image URL
  */
 export async function executeCreateShirtWorkflow(
   input: TCreateShirt,
   jobId: string,
-  imageProvider: "google" | "openai" = "google",
+  options: {
+    imageProvider?: "google" | "openai";
+    skipPublish?: boolean;
+    variantId?: number;
+  } = {},
 ): Promise<ShirtWorkflowResult> {
+  const { imageProvider = "google", skipPublish = true, variantId } = options;
+
   try {
     const { imageUrl, title } = await generateShirtDesign(
       input.prompt,
       imageProvider,
     );
 
-    const product = await createPrintifyProduct({
-      imageUrl,
-      title,
-      description: input.prompt,
-    });
+    let productId: string | undefined;
+    let order: any;
 
-    const order = await createPrintifyOrder({
-      productId: product.id,
-      variantId: product.variants[0].id,
-      quantity: 1,
-      addressTo: input.address_to,
-    });
+    if (skipPublish) {
+      // Direct order: Skip product creation, order with image URL directly
+      order = await createDirectPrintifyOrder({
+        imageUrl,
+        variantId,
+        quantity: 1,
+        addressTo: input.address_to,
+      });
+    } else {
+      // Traditional flow: Create product, publish, then order
+      const product = await createPrintifyProduct({
+        imageUrl,
+        title,
+        description: input.prompt,
+      });
 
-    await submitPrintifyOrder(order.id);
+      productId = product.id;
+
+      order = await createPrintifyOrder({
+        productId: product.id,
+        variantId: product.variants[0].id,
+        quantity: 1,
+        addressTo: input.address_to,
+      });
+    }
 
     return {
       success: true,
       jobId,
       imageUrl,
-      productId: product.id,
+      productId,
       orderId: order.id,
       trackingInfo: null,
     };
