@@ -26,14 +26,14 @@ export function CreateShirtForm() {
 
   const [formData, setFormData] = useState({
     prompt: "",
-    first_name: "John",
-    last_name: "Doe",
-    email: "john@example.com",
+    first_name: "Ryan",
+    last_name: "Sproule",
+    email: "ryan@merit.systems",
     phone: "+1 (555) 123-4567",
     country: "US",
     region: "NY",
     address1: "300 Kent Ave",
-    address2: "",
+    address2: "604",
     city: "Brooklyn",
     zip: "11249",
   });
@@ -66,7 +66,7 @@ export function CreateShirtForm() {
       const result = await response.json();
 
       // Type-safe response handling
-      if (response.ok && response.status === 202) {
+      if (response.ok && response.status === 200) {
         return result as TShirtJob;
       } else {
         throw result;
@@ -119,12 +119,6 @@ export function CreateShirtForm() {
 
         {/* Main Form Card */}
         <Card className="shadow-lg">
-          <CardHeader>
-            <CardTitle>Design Your Shirt</CardTitle>
-            <CardDescription>
-              Describe your design and provide shipping details below
-            </CardDescription>
-          </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Prompt Section */}
@@ -450,14 +444,14 @@ export function CreateShirtForm() {
           <Card className="border-green-500 bg-green-50 dark:bg-green-950">
             <CardHeader>
               <CardTitle className="text-green-900 dark:text-green-100">
-                ✓ Shirt Order Created
+                ✓ Shirt Created Successfully!
               </CardTitle>
               <CardDescription>
-                Your order has been queued successfully
+                Your custom shirt has been created and ordered
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="space-y-2">
+              <div className="space-y-3">
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-muted-foreground">Job ID:</span>
                   <code className="font-mono text-xs">
@@ -470,6 +464,34 @@ export function CreateShirtForm() {
                     {createShirtMutation.data.status}
                   </span>
                 </div>
+                {createShirtMutation.data.imageUrl && (
+                  <div className="space-y-2">
+                    <span className="text-muted-foreground text-sm">
+                      Design:
+                    </span>
+                    <img
+                      src={createShirtMutation.data.imageUrl}
+                      alt="Shirt design"
+                      className="w-full rounded-lg border"
+                    />
+                  </div>
+                )}
+                {createShirtMutation.data.productId && (
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-muted-foreground">Product ID:</span>
+                    <code className="font-mono text-xs">
+                      {createShirtMutation.data.productId}
+                    </code>
+                  </div>
+                )}
+                {createShirtMutation.data.orderId && (
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-muted-foreground">Order ID:</span>
+                    <code className="font-mono text-xs">
+                      {createShirtMutation.data.orderId}
+                    </code>
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>

@@ -1,4 +1,5 @@
-import { CreateShirtBody, type TCreateShirt } from "@/lib/contracts/shirt";
+import { CreateShirtBody } from "@/lib/contracts/shirt";
+import { executeCreateShirtWorkflow } from "@/lib/tasks/create-shirt-workflow";
 import { randomUUID } from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -18,18 +19,6 @@ function validateAddressBusinessRules(addr: { country: string; zip: string }) {
 // Example: idempotency (optional but recommended)
 function idempotencyKey(req: NextRequest) {
   return req.headers.get("Idempotency-Key") ?? null;
-}
-
-// Example: stub to queue work (image gen + Printify order creation)
-async function queueCreateShirtJob(input: {
-  prompt: string;
-  address_to: TCreateShirt["address_to"];
-  idemKey: string | null;
-}) {
-  // TODO: persist job to DB/queue; return job id
-  const id = randomUUID();
-  // push to your queue here
-  return { id, status: "queued" as const };
 }
 
 export async function POST(req: NextRequest) {
@@ -66,17 +55,39 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const idem = idempotencyKey(req);
-    const job = await queueCreateShirtJob({
-      prompt: validatedBody.prompt,
-      address_to: validatedBody.address_to,
-      idemKey: idem,
-    });
+    // Generate job ID
+    const jobId = randomUUID();
 
-    // Validate the response shape at runtime (defensive)
-    // If you want, re-use ShirtJob.safeParse(job) here.
+    // Execute the complete workflow synchronously
+    // (image generation + product creation + order)
+    console.log(`🚀 Executing shirt creation workflow for job ${jobId}`);
+    const result = await executeCreateShirtWorkflow(validatedBody, jobId);
 
-    return NextResponse.json(job, { status: 202 });
+    // Return the complete result
+    if (result.success) {
+      return NextResponse.json(
+        {
+          id: jobId,
+          status: "completed" as const,
+          imageUrl: result.imageUrl,
+          productId: result.productId,
+          orderId: result.orderId,
+          trackingInfo: result.trackingInfo,
+        },
+        { status: 200 },
+      );
+    } else {
+      return NextResponse.json(
+        {
+          ok: false,
+          error: {
+            code: "WORKFLOW_FAILED",
+            message: result.error || "Shirt creation workflow failed",
+          },
+        },
+        { status: 500 },
+      );
+    }
   } catch (e: any) {
     return NextResponse.json(
       {

@@ -28,7 +28,17 @@ export const CreateShirtBody = z.object({
 export const ShirtJob = z.object({
   id: z.string().uuid(),
   status: z.enum(["queued", "processing", "failed", "completed"]),
-  // You can extend later with preview_url, order_id, etc.
+  imageUrl: z.string().url().optional(),
+  productId: z.string().optional(),
+  orderId: z.string().optional(),
+  trackingInfo: z
+    .object({
+      carrier: z.string(),
+      trackingNumber: z.string(),
+      trackingUrl: z.string(),
+    })
+    .nullable()
+    .optional(),
 });
 
 export const ErrorShape = z.object({
@@ -47,10 +57,10 @@ export const shirtRouter = c.router({
   createShirt: {
     method: "POST",
     path: "/shirts",
-    summary: "Create a shirt from an LLM prompt and queue fulfillment",
+    summary: "Create a shirt from an LLM prompt and execute fulfillment",
     body: CreateShirtBody,
     responses: {
-      202: ShirtJob, // job queued
+      200: ShirtJob, // completed synchronously
       400: ErrorShape,
       422: ErrorShape, // schema valid but business invalid (e.g. address rejected by provider)
       500: ErrorShape,
