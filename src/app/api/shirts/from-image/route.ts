@@ -4,18 +4,6 @@ import { randomUUID } from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
-// CORS headers
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-  "Access-Control-Allow-Headers":
-    "Content-Type, Authorization, X-Payment-Token",
-};
-
-export async function OPTIONS(req: NextRequest) {
-  return NextResponse.json({}, { headers: corsHeaders });
-}
-
 // Schema for image-based shirt creation
 const CreateShirtFromImageBody = z.object({
   imageUrl: z.string().min(1, "Image URL is required"),
@@ -54,7 +42,7 @@ export async function POST(req: NextRequest) {
             details: validation.error.issues,
           },
         },
-        { status: 400, headers: corsHeaders },
+        { status: 400 },
       );
     }
 
@@ -68,7 +56,7 @@ export async function POST(req: NextRequest) {
     if (!biz.ok) {
       return NextResponse.json(
         { ok: false, error: { code: biz.code, message: biz.message } },
-        { status: 422, headers: corsHeaders },
+        { status: 422 },
       );
     }
 
@@ -92,7 +80,7 @@ export async function POST(req: NextRequest) {
         orderId: order.id,
         productId: null,
       },
-      { status: 200, headers: corsHeaders },
+      { status: 200 },
     );
   } catch (e: any) {
     return NextResponse.json(
@@ -100,7 +88,7 @@ export async function POST(req: NextRequest) {
         ok: false,
         error: { code: "INTERNAL_ERROR", message: "Failed to create shirt" },
       },
-      { status: 500, headers: corsHeaders },
+      { status: 500 },
     );
   }
 }
