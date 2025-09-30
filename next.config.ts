@@ -9,9 +9,6 @@ const nextConfig: NextConfig = {
   turbopack: {
     root: ".",
   },
-  experimental: {
-    nodeMiddleware: true, // Required for @coinbase/x402 until Edge runtime support is added
-  },
 };
 
 export default nextConfig;
