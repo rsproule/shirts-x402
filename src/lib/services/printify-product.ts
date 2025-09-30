@@ -1,3 +1,61 @@
+import Printify from "printify-sdk-js";
+
+const PRINTIFY_API_KEY = process.env.PRINTIFY_API_KEY;
+const PRINTIFY_SHOP_ID = process.env.PRINTIFY_SHOP_ID;
+
+// Initialize Printify SDK
+const getPrintifyClient = () => {
+  if (!PRINTIFY_API_KEY || !PRINTIFY_SHOP_ID) {
+    throw new Error("PRINTIFY_API_KEY and PRINTIFY_SHOP_ID must be set");
+  }
+
+  return new Printify({
+    accessToken: PRINTIFY_API_KEY,
+    shopId: PRINTIFY_SHOP_ID,
+    enableLogging: false,
+  });
+};
+
+// Default configuration for t-shirt products
+const DEFAULT_BLUEPRINT_ID = 706; // Comfort Colors t-shirt
+const DEFAULT_PRINT_PROVIDER_ID = 99;
+
+// Comfort Colors variant IDs
+const COMFORT_COLORS_VARIANTS = [
+  78994, 73199, 78993, 78962, 78991, 78964, 78961, 78963, 73203, 78992, 73211,
+  73207, 78965, 73215, 78995,
+];
+
+/**
+ * Upload image to Printify
+ * @param imageUrl - Base64 data URL or remote URL
+ * @returns Printify image upload ID
+ */
+export async function uploadImageToPrintify(imageUrl: string): Promise<string> {
+  try {
+    const printify = getPrintifyClient();
+
+    // Extract base64 from data URL if present
+    const base64Data = imageUrl.startsWith("data:")
+      ? imageUrl.split(",")[1]
+      : imageUrl;
+
+    const result = await printify.uploads.uploadImage({
+      file_name: `shirt-design-${Date.now()}.png`,
+      contents: base64Data,
+    });
+
+    return result.id;
+  } catch (error) {
+    console.error("[Printify] Upload error:", error);
+    throw new Error(
+      `Failed to upload image: ${
+        error instanceof Error ? error.message : "Unknown error"
+      }`,
+    );
+  }
+}
+
 /**
  * Create a product in Printify with the generated image
  */
@@ -5,88 +63,106 @@ export async function createPrintifyProduct(params: {
   imageUrl: string;
   title: string;
   description: string;
+  placement?: "front" | "back";
 }): Promise<PrintifyProduct> {
-  // TODO: Implement Printify API integration
-  // Example:
-  // const response = await fetch('https://api.printify.com/v1/shops/{shop_id}/products.json', {
-  //   method: 'POST',
-  //   headers: {
-  //     'Authorization': `Bearer ${process.env.PRINTIFY_API_KEY}`,
-  //     'Content-Type': 'application/json',
-  //   },
-  //   body: JSON.stringify({
-  //     title: params.title,
-  //     description: params.description,
-  //     blueprint_id: 3,  // Unisex t-shirt
-  //     print_provider_id: 99,  // Example provider
-  //     variants: [...],
-  //     print_areas: [{
-  //       variant_ids: [...],
-  //       placeholders: [{
-  //         position: 'front',
-  //         images: [{ id: uploadedImageId, x: 0.5, y: 0.5, scale: 1, angle: 0 }]
-  //       }]
-  //     }]
-  //   }),
-  // });
-  // return response.json();
+  try {
+    const printify = getPrintifyClient();
 
-  console.log("[Printify Product] Creating product:", {
-    imageUrl: params.imageUrl,
-    title: params.title,
-  });
+    // Step 1: Upload image to Printify
+    const uploadedImageId = await uploadImageToPrintify(params.imageUrl);
 
-  // Dummy implementation
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-
-  const dummyProduct: PrintifyProduct = {
-    id: `prod_${Date.now()}`,
-    title: params.title,
-    description: params.description,
-    blueprint_id: 3,
-    print_provider_id: 99,
-    variants: [
-      {
-        id: 12345,
-        sku: "SHIRT-M-BLK",
+    // Step 2: Create product with uploaded image
+    const productPayload = {
+      title: params.title,
+      description: params.description || "",
+      blueprint_id: DEFAULT_BLUEPRINT_ID,
+      print_provider_id: DEFAULT_PRINT_PROVIDER_ID,
+      variants: COMFORT_COLORS_VARIANTS.map((id) => ({
+        id,
         price: 2500, // $25.00 in cents
         is_enabled: true,
-      },
-    ],
-    images: [
-      {
-        src: params.imageUrl,
-        variant_ids: [12345],
-        position: "front",
-      },
-    ],
-  };
+      })),
+      print_areas: [
+        {
+          variant_ids: COMFORT_COLORS_VARIANTS,
+          placeholders: [
+            {
+              position: params.placement === "back" ? "back" : "front",
+              images: [
+                {
+                  id: uploadedImageId,
+                  x: 0.5,
+                  y: 0.4,
+                  scale: 0.5,
+                  angle: 0,
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    };
 
-  console.log("[Printify Product] Successfully created product:", dummyProduct.id);
-  return dummyProduct;
+    const product = await printify.products.create(productPayload);
+
+    // Step 3: Publish the product
+    await publishPrintifyProduct(product.id);
+
+    return product as PrintifyProduct;
+  } catch (error) {
+    console.error("[Printify] Product creation error:", error);
+    throw new Error(
+      `Failed to create product: ${
+        error instanceof Error ? error.message : "Unknown error"
+      }`,
+    );
+  }
 }
 
 /**
- * Upload image to Printify
+ * Publish a product to make it available
  */
-export async function uploadImageToPrintify(imageUrl: string): Promise<string> {
-  // TODO: Implement Printify image upload
-  // const response = await fetch('https://api.printify.com/v1/uploads/images.json', {
-  //   method: 'POST',
-  //   headers: {
-  //     'Authorization': `Bearer ${process.env.PRINTIFY_API_KEY}`,
-  //     'Content-Type': 'application/json',
-  //   },
-  //   body: JSON.stringify({ file_name: 'shirt-design.png', url: imageUrl }),
-  // });
-  // const data = await response.json();
-  // return data.id;
+export async function publishPrintifyProduct(productId: string): Promise<void> {
+  try {
+    const printify = getPrintifyClient();
 
-  console.log("[Printify Product] Uploading image to Printify:", imageUrl);
-  await new Promise((resolve) => setTimeout(resolve, 500));
-  const uploadId = `img_${Date.now()}`;
-  console.log("[Printify Product] Successfully uploaded image:", uploadId);
-  return uploadId;
+    await printify.products.publishOne(productId, {
+      title: true,
+      description: true,
+      images: true,
+      variants: true,
+      tags: true,
+      keyFeatures: true,
+      shipping_template: true,
+    });
+  } catch (error) {
+    console.error("[Printify] Publish error:", error);
+    throw new Error(
+      `Failed to publish product: ${
+        error instanceof Error ? error.message : "Unknown error"
+      }`,
+    );
+  }
+}
+
+/**
+ * Get product details from Printify
+ */
+export async function getPrintifyProduct(
+  productId: string,
+): Promise<PrintifyProduct> {
+  try {
+    const printify = getPrintifyClient();
+    const product = await printify.products.getOne(productId);
+    return product as PrintifyProduct;
+  } catch (error) {
+    console.error("[Printify] Get product error:", error);
+    throw new Error(
+      `Failed to get product: ${
+        error instanceof Error ? error.message : "Unknown error"
+      }`,
+    );
+  }
 }
 
 // Printify API Types

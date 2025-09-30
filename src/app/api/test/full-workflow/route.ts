@@ -27,13 +27,9 @@ export async function POST(req: NextRequest) {
 
     const jobId = randomUUID();
 
-    console.log("[Test] Testing full workflow with job:", jobId);
-
     const startTime = Date.now();
     const result = await executeCreateShirtWorkflow(validation.data, jobId);
     const duration = Date.now() - startTime;
-
-    console.log("[Test] Full workflow test completed successfully");
 
     return NextResponse.json(
       {

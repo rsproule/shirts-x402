@@ -31,14 +31,10 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    console.log(`[Test] Testing image generation with ${provider} provider`, prompt);
-
     // Test the image generation workflow
     const startTime = Date.now();
     const result = await generateShirtDesign(prompt, provider);
     const duration = Date.now() - startTime;
-
-    console.log("[Test] Image generation test completed successfully", result);
 
     return NextResponse.json(
       {
@@ -76,14 +72,17 @@ export async function POST(req: NextRequest) {
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const prompt = searchParams.get("prompt");
-  const provider = (searchParams.get("provider") || "google") as "google" | "openai";
+  const provider = (searchParams.get("provider") || "google") as
+    | "google"
+    | "openai";
 
   if (!prompt) {
     return NextResponse.json(
       {
         ok: false,
         error: "Prompt query parameter is required",
-        example: "/api/test/image-generation?prompt=minimalist+line+art+falcon&provider=google",
+        example:
+          "/api/test/image-generation?prompt=minimalist+line+art+falcon&provider=google",
       },
       { status: 400 },
     );
@@ -99,14 +98,15 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  console.log(`🧪 Testing image generation with ${provider} for prompt:`, prompt);
+  console.log(
+    `🧪 Testing image generation with ${provider} for prompt:`,
+    prompt,
+  );
 
   try {
     const startTime = Date.now();
     const result = await generateShirtDesign(prompt, provider);
     const duration = Date.now() - startTime;
-
-    console.log("[Test] Image generation test completed successfully", result);
 
     return NextResponse.json(
       {

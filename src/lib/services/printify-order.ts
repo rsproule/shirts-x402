@@ -1,5 +1,22 @@
 import type { TAddressTo } from "@/lib/contracts/shirt";
 import { toPrintifyAddress } from "@/lib/providers/printify";
+import Printify from "printify-sdk-js";
+
+const PRINTIFY_API_KEY = process.env.PRINTIFY_API_KEY;
+const PRINTIFY_SHOP_ID = process.env.PRINTIFY_SHOP_ID;
+
+// Initialize Printify SDK
+const getPrintifyClient = () => {
+  if (!PRINTIFY_API_KEY || !PRINTIFY_SHOP_ID) {
+    throw new Error("PRINTIFY_API_KEY and PRINTIFY_SHOP_ID must be set");
+  }
+
+  return new Printify({
+    accessToken: PRINTIFY_API_KEY,
+    shopId: PRINTIFY_SHOP_ID,
+    enableLogging: false,
+  });
+};
 
 /**
  * Create an order in Printify
@@ -10,80 +27,53 @@ export async function createPrintifyOrder(params: {
   quantity: number;
   addressTo: TAddressTo;
 }): Promise<PrintifyOrder> {
-  // TODO: Implement Printify order creation
-  // Example:
-  // const response = await fetch('https://api.printify.com/v1/shops/{shop_id}/orders.json', {
-  //   method: 'POST',
-  //   headers: {
-  //     'Authorization': `Bearer ${process.env.PRINTIFY_API_KEY}`,
-  //     'Content-Type': 'application/json',
-  //   },
-  //   body: JSON.stringify({
-  //     external_id: `order-${Date.now()}`,
-  //     line_items: [{
-  //       product_id: params.productId,
-  //       variant_id: params.variantId,
-  //       quantity: params.quantity,
-  //     }],
-  //     shipping_method: 1,
-  //     send_shipping_notification: true,
-  //     address_to: toPrintifyAddress(params.addressTo),
-  //   }),
-  // });
-  // return response.json();
+  try {
+    const printify = getPrintifyClient();
 
-  console.log("[Printify Order] Creating order:", {
-    productId: params.productId,
-    variantId: params.variantId,
-    quantity: params.quantity,
-  });
+    // Convert address to Printify format
+    const printifyAddress = toPrintifyAddress(params.addressTo);
 
-  // Convert address to Printify format
-  const printifyAddress = toPrintifyAddress(params.addressTo);
+    const orderPayload = {
+      external_id: `order-${Date.now()}`,
+      line_items: [
+        {
+          product_id: params.productId,
+          variant_id: params.variantId,
+          quantity: params.quantity,
+        },
+      ],
+      shipping_method: 1,
+      send_shipping_notification: true,
+      address_to: printifyAddress,
+    };
 
-  // Dummy implementation
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-
-  const dummyOrder: PrintifyOrder = {
-    id: `order_${Date.now()}`,
-    external_id: `ext_order_${Date.now()}`,
-    status: "pending",
-    line_items: [
-      {
-        product_id: params.productId,
-        variant_id: params.variantId,
-        quantity: params.quantity,
-        price: 2500, // $25.00 in cents
-      },
-    ],
-    address_to: printifyAddress,
-    shipment: {
-      carrier: "USPS",
-      tracking_number: null,
-      tracking_url: null,
-    },
-    created_at: new Date().toISOString(),
-  };
-
-  console.log("[Printify Order] Successfully created order:", dummyOrder.id);
-  return dummyOrder;
+    const order = await printify.orders.create(orderPayload);
+    return order as PrintifyOrder;
+  } catch (error) {
+    console.error("[Printify] Order creation error:", error);
+    throw new Error(
+      `Failed to create order: ${
+        error instanceof Error ? error.message : "Unknown error"
+      }`,
+    );
+  }
 }
 
 /**
  * Submit order for production
  */
 export async function submitPrintifyOrder(orderId: string): Promise<void> {
-  // TODO: Implement order submission
-  // await fetch(`https://api.printify.com/v1/shops/{shop_id}/orders/${orderId}/send_to_production.json`, {
-  //   method: 'POST',
-  //   headers: {
-  //     'Authorization': `Bearer ${process.env.PRINTIFY_API_KEY}`,
-  //   },
-  // });
-
-  console.log("[Printify Order] Submitting order to production:", orderId);
-  await new Promise((resolve) => setTimeout(resolve, 500));
-  console.log("[Printify Order] Successfully submitted order to production");
+  try {
+    const printify = getPrintifyClient();
+    await printify.orders.submit(orderId);
+  } catch (error) {
+    console.error("[Printify] Order submission error:", error);
+    throw new Error(
+      `Failed to submit order: ${
+        error instanceof Error ? error.message : "Unknown error"
+      }`,
+    );
+  }
 }
 
 // Printify Order Types

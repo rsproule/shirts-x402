@@ -21,8 +21,6 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    console.log("[Test] Testing Printify product creation:", { imageUrl, title });
-
     const startTime = Date.now();
     const product = await createPrintifyProduct({
       imageUrl,
@@ -30,8 +28,6 @@ export async function POST(req: NextRequest) {
       description,
     });
     const duration = Date.now() - startTime;
-
-    console.log("[Test] Product creation test completed successfully:", product.id);
 
     return NextResponse.json(
       {

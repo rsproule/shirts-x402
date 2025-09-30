@@ -60,7 +60,6 @@ export async function POST(req: NextRequest) {
 
     // Execute the complete workflow synchronously
     // (image generation + product creation + order)
-    console.log(`[API] Executing shirt creation workflow for job ${jobId}`);
     const result = await executeCreateShirtWorkflow(validatedBody, jobId);
 
     // Return the complete result

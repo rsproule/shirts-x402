@@ -38,12 +38,6 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    console.log("[Test] Testing Printify order creation:", {
-      productId,
-      variantId,
-      quantity,
-    });
-
     const startTime = Date.now();
 
     // Create order
@@ -58,8 +52,6 @@ export async function POST(req: NextRequest) {
     await submitPrintifyOrder(order.id);
 
     const duration = Date.now() - startTime;
-
-    console.log("[Test] Order creation test completed successfully:", order.id);
 
     return NextResponse.json(
       {
