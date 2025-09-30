@@ -62,6 +62,7 @@ export async function POST(req: NextRequest) {
     // (image generation + direct order submission, skipping product publish)
     const result = await executeCreateShirtWorkflow(validatedBody, jobId, {
       skipPublish: true, // Use direct ordering for faster workflow
+      variantId: undefined, // Will be determined by size/color
     });
 
     // Return the complete result

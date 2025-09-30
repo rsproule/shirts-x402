@@ -22,6 +22,8 @@ export const AddressTo = z.object({
 
 export const CreateShirtBody = z.object({
   prompt: z.string().min(10, "Prompt too short").max(4000, "Prompt too long"),
+  size: z.enum(["S", "M", "L", "XL", "2XL", "3XL", "4XL", "5XL"]).default("XL"),
+  color: z.enum(["Black", "White"]).default("White"),
   address_to: AddressTo,
 });
 

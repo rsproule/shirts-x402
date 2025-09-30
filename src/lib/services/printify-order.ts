@@ -142,28 +142,11 @@ export async function createDirectPrintifyOrder(params: {
     const printify = getPrintifyOrderClient();
     const printifyAddress = toPrintifyAddress(params.addressTo);
 
-    // Step 1: Upload image to Printify using product client
-    const Printify = (await import("printify-sdk-js")).default;
-    const productClient = new Printify({
-      accessToken: process.env.PRINTIFY_API_KEY!,
-      shopId: process.env.PRINTIFY_SHOP_ID!,
-      enableLogging: false,
-    });
-
-    const base64Data = params.imageUrl.startsWith("data:")
-      ? params.imageUrl.split(",")[1]
-      : params.imageUrl;
-
-    const uploadResult = await productClient.uploads.uploadImage({
-      file_name: `shirt-design-${Date.now()}.png`,
-      contents: base64Data,
-    });
-
-    // Use the preview_url or file_name (Printify needs a full URL, not just filename)
-    const printifyImageUrl =
-      uploadResult.preview_url ||
-      uploadResult.upload_url ||
-      `https://images-api.printify.com/${uploadResult.id}`;
+    // Step 1: Upload image to Printify (reuse shared upload function)
+    const { uploadImageAndGetUrl } = await import("./printify-product");
+    const { previewUrl: printifyImageUrl } = await uploadImageAndGetUrl(
+      params.imageUrl,
+    );
 
     // Determine variant ID
     let variantId: number;
@@ -198,7 +181,15 @@ export async function createDirectPrintifyOrder(params: {
           blueprint_id: CC_BLUEPRINT_ID,
           variant_id: variantId,
           print_areas: {
-            front: printifyImageUrl,
+            front: [
+              {
+                src: printifyImageUrl,
+                scale: 0.5,
+                x: 0.5,
+                y: 0.4,
+                angle: 0,
+              },
+            ],
           },
           quantity: params.quantity,
           external_id: lineItemExternalId,

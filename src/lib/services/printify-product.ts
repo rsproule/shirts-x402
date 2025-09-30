@@ -48,14 +48,45 @@ export async function uploadImageToPrintify(imageUrl: string): Promise<string> {
     return result.id;
   } catch (error: any) {
     console.error("[Printify] Upload error:", error);
-    console.error("[Printify] Upload error details:", {
-      message: error?.message,
-      response: error?.response?.data,
-      status: error?.response?.status,
-    });
     throw new Error(
       `Failed to upload image: ${
-        error instanceof Error ? error.message : JSON.stringify(error)
+        error instanceof Error ? error.message : "Unknown error"
+      }`,
+    );
+  }
+}
+
+/**
+ * Upload image and return both ID and preview URL
+ */
+export async function uploadImageAndGetUrl(imageUrl: string): Promise<{
+  id: string;
+  previewUrl: string;
+}> {
+  try {
+    const printify = getPrintifyClient();
+
+    const base64Data = imageUrl.startsWith("data:")
+      ? imageUrl.split(",")[1]
+      : imageUrl;
+
+    const result = await printify.uploads.uploadImage({
+      file_name: `shirt-design-${Date.now()}.png`,
+      contents: base64Data,
+    });
+
+    const previewUrl =
+      result.preview_url || `https://images-api.printify.com/${result.id}`;
+
+    return {
+      id: result.id,
+      previewUrl,
+    };
+  } catch (error: any) {
+    console.error("[Printify] Upload error:", error);
+    throw new Error(
+      `Failed to upload image: ${
+        error instanceof Error ? error.message : "Unknown error"
       }`,
     );
   }

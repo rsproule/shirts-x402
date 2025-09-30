@@ -36,6 +36,8 @@ export async function executeCreateShirtWorkflow(
       // Direct order: Skip product creation, order with image URL directly
       order = await createDirectPrintifyOrder({
         imageUrl,
+        size: input.size,
+        color: input.color,
         variantId,
         quantity: 1,
         addressTo: input.address_to,

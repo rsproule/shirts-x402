@@ -26,6 +26,8 @@ export function CreateShirtForm() {
 
   const [formData, setFormData] = useState({
     prompt: "",
+    size: "XL",
+    color: "White",
     first_name: "Ryan",
     last_name: "Sproule",
     email: "ryan@merit.systems",
@@ -80,6 +82,16 @@ export function CreateShirtForm() {
     // Type-safe input
     const payload: TCreateShirt = {
       prompt: formData.prompt,
+      size: formData.size as
+        | "S"
+        | "M"
+        | "L"
+        | "XL"
+        | "2XL"
+        | "3XL"
+        | "4XL"
+        | "5XL",
+      color: formData.color as "Black" | "White",
       address_to: {
         first_name: formData.first_name,
         last_name: formData.last_name,
@@ -143,6 +155,59 @@ export function CreateShirtForm() {
                 <p className="text-xs text-muted-foreground">
                   10-4000 characters
                 </p>
+              </div>
+
+              {/* Size and Color Selection */}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label
+                    htmlFor="size"
+                    className="text-sm font-medium leading-none"
+                  >
+                    Size
+                  </label>
+                  <select
+                    id="size"
+                    name="size"
+                    value={formData.size}
+                    onChange={(e) =>
+                      setFormData((prev) => ({ ...prev, size: e.target.value }))
+                    }
+                    className="w-full p-2 border rounded-md bg-background"
+                  >
+                    <option value="S">Small</option>
+                    <option value="M">Medium</option>
+                    <option value="L">Large</option>
+                    <option value="XL">X-Large</option>
+                    <option value="2XL">2X-Large</option>
+                    <option value="3XL">3X-Large</option>
+                    <option value="4XL">4X-Large</option>
+                    <option value="5XL">5X-Large</option>
+                  </select>
+                </div>
+                <div className="space-y-2">
+                  <label
+                    htmlFor="color"
+                    className="text-sm font-medium leading-none"
+                  >
+                    Color
+                  </label>
+                  <select
+                    id="color"
+                    name="color"
+                    value={formData.color}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        color: e.target.value,
+                      }))
+                    }
+                    className="w-full p-2 border rounded-md bg-background"
+                  >
+                    <option value="Black">Black</option>
+                    <option value="White">White</option>
+                  </select>
+                </div>
               </div>
 
               {/* Divider */}
