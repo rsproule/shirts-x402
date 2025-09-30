@@ -1,5 +1,5 @@
-import { paymentMiddleware } from "x402-next";
 import { facilitator } from "@coinbase/x402";
+import { paymentMiddleware } from "x402-next";
 
 export const middleware = paymentMiddleware(
   "0xc0541B06F703c6753B842D83cF62d55F93EE81bE", // rsproule merit wallet
@@ -8,7 +8,14 @@ export const middleware = paymentMiddleware(
       price: "$0.01",
       network: "base",
       config: {
-        description: "Programmatic Shirt create + purchase",
+        description: "AI-generated shirt design + purchase",
+      },
+    },
+    "/api/shirts/from-image": {
+      price: "$0.01",
+      network: "base",
+      config: {
+        description: "Custom shirt from your image",
       },
     },
   },
@@ -17,5 +24,5 @@ export const middleware = paymentMiddleware(
 
 // Configure which paths the middleware should run on
 export const config = {
-  matcher: ["/api/shirts"],
+  matcher: ["/api/shirts", "/api/shirts/from-image"],
 };
