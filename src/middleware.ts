@@ -5,9 +5,6 @@ import { CreateShirtFromImageBody } from "./app/api/shirts/from-image/route";
 import { CreateShirtBody, ShirtJob } from "./lib/contracts/shirt";
 import { inputSchemaToX402 } from "./lib/x402-schema";
 
-console.log("api key id:", process.env.CDP_API_KEY_ID);
-console.log("api key secret:", process.env.CDP_API_KEY_SECRET);
-
 export const middleware = paymentMiddleware(
   "0xc0541B06F703c6753B842D83cF62d55F93EE81bE",
   {
@@ -37,4 +34,5 @@ export const middleware = paymentMiddleware(
 
 export const config = {
   matcher: ["/api/shirts/:path*"],
+  runtime: "nodejs", // Required for @coinbase/x402 until Edge support is added
 };
