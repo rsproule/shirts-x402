@@ -4,8 +4,7 @@ import { z } from "zod";
 // --- Shared primitives
 const CountryISO2 = z
   .string()
-  .regex(/^[A-Z]{2}$/, "Use ISO-3166-1 alpha-2 (e.g. US, BE)")
-  .transform((s) => s.toUpperCase());
+  .regex(/^[A-Z]{2}$/, "Use ISO-3166-1 alpha-2 (e.g. US, BE)");
 
 export const AddressTo = z.object({
   first_name: z.string().min(1),

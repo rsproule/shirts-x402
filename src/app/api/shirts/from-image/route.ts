@@ -5,7 +5,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
 // Schema for image-based shirt creation
-const CreateShirtFromImageBody = z.object({
+export const CreateShirtFromImageBody = z.object({
   imageUrl: z.string().min(1, "Image URL is required"),
   size: z.enum(["S", "M", "L", "XL", "2XL", "3XL", "4XL", "5XL"]).default("XL"),
   color: z.enum(["Black", "White"]).default("White"),
