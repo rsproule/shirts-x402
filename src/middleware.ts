@@ -1,9 +1,12 @@
 import { facilitator } from "@coinbase/x402";
 import { paymentMiddleware } from "x402-next";
-import { CreateShirtBody, ShirtJob } from "./lib/contracts/shirt";
 import { z } from "zod";
-import { inputSchemaToX402 } from "./lib/x402-schema";
 import { CreateShirtFromImageBody } from "./app/api/shirts/from-image/route";
+import { CreateShirtBody, ShirtJob } from "./lib/contracts/shirt";
+import { inputSchemaToX402 } from "./lib/x402-schema";
+
+console.log("api key id:", process.env.CDP_API_KEY_ID);
+console.log("api key secret:", process.env.CDP_API_KEY_SECRET);
 
 export const middleware = paymentMiddleware(
   "0xc0541B06F703c6753B842D83cF62d55F93EE81bE",
