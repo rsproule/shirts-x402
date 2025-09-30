@@ -3,6 +3,18 @@ import { executeCreateShirtWorkflow } from "@/lib/tasks/create-shirt-workflow";
 import { randomUUID } from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 
+// CORS headers
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+  "Access-Control-Allow-Headers":
+    "Content-Type, Authorization, X-Payment-Token",
+};
+
+export async function OPTIONS(req: NextRequest) {
+  return NextResponse.json({}, { headers: corsHeaders });
+}
+
 // Example: business validators that go beyond Zod
 function validateAddressBusinessRules(addr: { country: string; zip: string }) {
   // Add country-specific ZIP heuristics as needed; keep minimal for now.
@@ -37,7 +49,7 @@ export async function POST(req: NextRequest) {
             details: validation.error.issues,
           },
         },
-        { status: 400 },
+        { status: 400, headers: corsHeaders },
       );
     }
 
@@ -51,7 +63,7 @@ export async function POST(req: NextRequest) {
     if (!biz.ok) {
       return NextResponse.json(
         { ok: false, error: { code: biz.code, message: biz.message } },
-        { status: 422 },
+        { status: 422, headers: corsHeaders },
       );
     }
 
@@ -76,7 +88,7 @@ export async function POST(req: NextRequest) {
           orderId: result.orderId,
           trackingInfo: result.trackingInfo,
         },
-        { status: 200 },
+        { status: 200, headers: corsHeaders },
       );
     } else {
       return NextResponse.json(
@@ -87,7 +99,7 @@ export async function POST(req: NextRequest) {
             message: result.error || "Shirt creation workflow failed",
           },
         },
-        { status: 500 },
+        { status: 500, headers: corsHeaders },
       );
     }
   } catch (e: any) {
@@ -96,7 +108,7 @@ export async function POST(req: NextRequest) {
         ok: false,
         error: { code: "INTERNAL_ERROR", message: "Failed to queue job" },
       },
-      { status: 500 },
+      { status: 500, headers: corsHeaders },
     );
   }
 }

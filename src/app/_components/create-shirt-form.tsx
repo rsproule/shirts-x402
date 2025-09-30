@@ -56,6 +56,7 @@ export function CreateShirtForm() {
       const paymentFetch = wrapFetchWithPayment(
         fetch,
         walletClient as unknown as Signer,
+        BigInt(25_000_000),
       );
 
       const response = await paymentFetch("/api/shirts", {
@@ -91,6 +92,7 @@ export function CreateShirtForm() {
       const paymentFetch = wrapFetchWithPayment(
         fetch,
         walletClient as unknown as Signer,
+        BigInt(25_000_000),
       );
 
       const response = await paymentFetch("/api/shirts/from-image", {
