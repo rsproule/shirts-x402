@@ -1,7 +1,6 @@
-import Chat from '@/app/_components/chat';
-import SignInButton from '@/app/_components/echo/sign-in-button';
-import { isSignedIn } from '@/echo';
-import { PayButton } from './_components/x402/pay-button';
+import SignInButton from "@/app/_components/echo/sign-in-button";
+import { isSignedIn } from "@/echo";
+import { CreateShirtForm } from "./_components/create-shirt-form";
 
 export default async function Home() {
   const signedIn = await isSignedIn();
@@ -12,10 +11,10 @@ export default async function Home() {
         <div className="w-full max-w-md space-y-8 text-center">
           <div>
             <h2 className="mt-6 font-bold text-3xl text-gray-900 tracking-tight dark:text-white">
-              Echo Demo App
+              ShirtSlop - Custom Shirt Creator
             </h2>
             <p className="mt-2 text-gray-600 text-sm dark:text-gray-400">
-              AI-powered chat with built-in billing and user management
+              AI-powered shirt designs with x402 payments
             </p>
           </div>
 
@@ -31,6 +30,10 @@ export default async function Home() {
     );
   }
 
-  // return <Chat />;
-  return <PayButton />;
+  return (
+    <div className="relative">
+      {/* Wallet Connect - Fixed top right */}
+      <CreateShirtForm />
+    </div>
+  );
 }

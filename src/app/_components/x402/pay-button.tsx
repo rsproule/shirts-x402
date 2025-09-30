@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { Button } from '@/components/ui/button';
-import { useQuery } from '@tanstack/react-query';
-import { useState } from 'react';
-import { useAccount, useConnectorClient, useWalletClient } from 'wagmi';
-import { wrapFetchWithPayment } from 'x402-fetch';
+import { Button } from "@/components/ui/button";
+import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
+import { useAccount, useWalletClient } from "wagmi";
+import { Signer, wrapFetchWithPayment } from "x402-fetch";
 
 export function PayButton() {
   const [shouldFetch, setShouldFetch] = useState(false);
@@ -13,10 +13,10 @@ export function PayButton() {
 
   const { data: client } = useWalletClient();
   const { data, error, isLoading, refetch } = useQuery({
-    queryKey: ['x402-payment'],
+    queryKey: ["x402-payment"],
     queryFn: async () => {
-      const _fetch = wrapFetchWithPayment(fetch, client);
-      const response = await _fetch('/api/x402');
+      const _fetch = wrapFetchWithPayment(fetch, client as unknown as Signer); // coinbase bricked their viem versions here
+      const response = await _fetch("/api/shirts");
       return response.json();
     },
     retry: false,
@@ -28,20 +28,20 @@ export function PayButton() {
     refetch();
   };
 
-  console.log('data:', data);
-  console.log('error:', error);
+  console.log("data:", data);
+  console.log("error:", error);
   const result = error
     ? JSON.stringify(error, null, 2)
     : data
-      ? JSON.stringify(data, null, 2)
-      : '';
+    ? JSON.stringify(data, null, 2)
+    : "";
 
   return (
     <div className="flex flex-col items-center justify-center h-screen">
       <div className="space-y-4 text-center">
         <div className="text-sm text-gray-500">{account.address}</div>
         <Button onClick={handlePayment} disabled={isLoading}>
-          {isLoading ? 'Processing...' : 'Pay'}
+          {isLoading ? "Processing..." : "Pay"}
         </Button>
         {result && (
           <pre className="p-4 bg-gray-100 rounded text-sm overflow-auto text-center">
