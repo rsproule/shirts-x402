@@ -1,4 +1,5 @@
 import { paymentMiddleware } from "x402-next";
+import { facilitator } from "@coinbase/x402";
 
 export const middleware = paymentMiddleware(
   "0xc0541B06F703c6753B842D83cF62d55F93EE81bE", // rsproule merit wallet
@@ -11,6 +12,7 @@ export const middleware = paymentMiddleware(
       },
     },
   },
+  facilitator,
 );
 
 // Configure which paths the middleware should run on

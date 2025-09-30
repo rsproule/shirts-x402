@@ -11,15 +11,14 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import {
-  shirtRouter,
   type TCreateShirt,
   type TShirtJob,
+  CreateShirtBody,
 } from "@/lib/contracts/shirt";
 import { useMutation } from "@tanstack/react-query";
-import { initClient } from "@ts-rest/core";
 import { useState } from "react";
 import { useWalletClient } from "wagmi";
-import { wrapFetchWithPayment } from "x402-fetch";
+import { Signer, wrapFetchWithPayment } from "x402-fetch";
 
 export function CreateShirtForm() {
   const { data: walletClient } = useWalletClient();
@@ -39,43 +38,38 @@ export function CreateShirtForm() {
     zip: "11249",
   });
 
-  // Type-safe mutation with TanStack Query + ts-rest
+  // Type-safe mutation with TanStack Query
   const createShirtMutation = useMutation({
     mutationFn: async (data: TCreateShirt) => {
-      // Create ts-rest client with payment-wrapped fetch
-      const paymentFetch = wrapFetchWithPayment(fetch, walletClient);
+      if (!walletClient) {
+        throw new Error("Wallet not connected");
+      }
 
-      const client = initClient(shirtRouter, {
-        baseUrl: "/api",
-        baseHeaders: {},
-        api: async ({ path, method, headers, body }) => {
-          const response = await paymentFetch(path, {
-            method,
-            headers: {
-              "Content-Type": "application/json",
-              ...headers,
-            },
-            body: body ? JSON.stringify(body) : undefined,
-          });
+      // Validate input with Zod before sending
+      const validated = CreateShirtBody.parse(data);
 
-          return {
-            status: response.status,
-            body: await response.json(),
-            headers: response.headers,
-          };
+      // Create payment-wrapped fetch
+      const paymentFetch = wrapFetchWithPayment(
+        fetch,
+        walletClient as unknown as Signer,
+      ); // coinbase bricked their viem versions here
+
+      // Make typed API call
+      const response = await paymentFetch("/api/shirts", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
+        body: JSON.stringify(validated),
       });
 
-      // Fully typed API call
-      const result = await client.createShirt({
-        body: data,
-      });
+      const result = await response.json();
 
       // Type-safe response handling
-      if (result.status === 202) {
-        return result.body as TShirtJob;
+      if (response.ok && response.status === 202) {
+        return result as TShirtJob;
       } else {
-        throw result.body;
+        throw result;
       }
     },
   });
