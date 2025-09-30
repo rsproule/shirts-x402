@@ -15,6 +15,7 @@ const paymentMw = paymentMiddleware(
       network: "base",
       config: {
         description: "AI-generated shirt design + purchase",
+        discoverable: true,
         inputSchema: inputSchemaToX402(CreateShirtBody),
         outputSchema: z.toJSONSchema(ShirtJob),
       },
@@ -24,6 +25,7 @@ const paymentMw = paymentMiddleware(
       network: "base",
       config: {
         description: "Custom shirt from your image",
+        discoverable: true,
         inputSchema: inputSchemaToX402(CreateShirtFromImageBody),
         outputSchema: z.toJSONSchema(ShirtJob),
       },
