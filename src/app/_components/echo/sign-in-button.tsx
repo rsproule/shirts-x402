@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useEcho } from '@merit-systems/echo-next-sdk/client';
-import { Button } from '@/components/ui/button';
+import { useEcho } from "@merit-systems/echo-next-sdk/client";
+import { Button } from "@/components/ui/button";
 
 export default function SignInButton() {
   const { signIn } = useEcho();

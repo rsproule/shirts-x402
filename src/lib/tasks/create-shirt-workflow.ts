@@ -1,9 +1,6 @@
 import type { TCreateShirt } from "@/lib/contracts/shirt";
 import { generateShirtDesign } from "@/lib/services/image-generation";
-import {
-  createDirectPrintifyOrder,
-  createPrintifyOrder,
-} from "@/lib/services/printify-order";
+import { createDirectPrintifyOrder, createPrintifyOrder } from "@/lib/services/printify-order";
 import { createPrintifyProduct } from "@/lib/services/printify-product";
 
 /**
@@ -24,10 +21,7 @@ export async function executeCreateShirtWorkflow(
   const { imageProvider = "google", skipPublish = true, variantId } = options;
 
   try {
-    const { imageUrl, title } = await generateShirtDesign(
-      input.prompt,
-      imageProvider,
-    );
+    const { imageUrl, title } = await generateShirtDesign(input.prompt, imageProvider);
 
     let productId: string | undefined;
     let order: any;
@@ -83,10 +77,7 @@ export async function executeCreateShirtWorkflow(
  * Queue the workflow for background processing
  * In production, this would use a queue system like BullMQ, Inngest, etc.
  */
-export async function queueCreateShirtWorkflow(
-  input: TCreateShirt,
-  jobId: string,
-): Promise<void> {
+export async function queueCreateShirtWorkflow(input: TCreateShirt, jobId: string): Promise<void> {
   // TODO: Implement with proper queue system
   // Example with BullMQ:
   // await shirtQueue.add('create-shirt', { input, jobId }, {
@@ -127,9 +118,7 @@ export interface ShirtWorkflowResult {
 /**
  * Get workflow status (for future status endpoint)
  */
-export async function getWorkflowStatus(
-  jobId: string,
-): Promise<WorkflowStatus> {
+export async function getWorkflowStatus(jobId: string): Promise<WorkflowStatus> {
   // TODO: Implement status retrieval from database/queue
   return {
     jobId,

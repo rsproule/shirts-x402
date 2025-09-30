@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { Button } from '@/components/echo-button';
-import { MoneyInput } from '@/components/money-input';
-import { type EchoContextValue } from '@merit-systems/echo-react-sdk';
-import { Check, CreditCard, Edit, Loader2 } from 'lucide-react';
-import { useState } from 'react';
+import { Button } from "@/components/echo-button";
+import { MoneyInput } from "@/components/money-input";
+import { type EchoContextValue } from "@merit-systems/echo-react-sdk";
+import { Check, CreditCard, Edit, Loader2 } from "lucide-react";
+import { useState } from "react";
 
 export function EchoTopUpButton({ echo }: { echo: EchoContextValue }) {
   const [isLoading, setIsLoading] = useState(false);
@@ -39,7 +39,7 @@ export function EchoTopUpButton({ echo }: { echo: EchoContextValue }) {
             size="lg"
             variant="turbo"
             disabled={isLoading || amount <= 0}
-            onClick={e => {
+            onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
               if (amount <= 0) return;
@@ -50,20 +50,16 @@ export function EchoTopUpButton({ echo }: { echo: EchoContextValue }) {
               const left = (window.innerWidth - width) / 2;
               const top = (window.innerHeight - height) / 2;
               const popup = window.open(
-                'about:blank',
-                'payment',
-                `width=${width},height=${height},left=${left},top=${top}`
+                "about:blank",
+                "payment",
+                `width=${width},height=${height},left=${left},top=${top}`,
               );
 
               createPaymentLink(amount)
-                .then(url => {
+                .then((url) => {
                   // If popup was blocked or we're on mobile, open in new tab
-                  if (
-                    !popup ||
-                    popup.closed ||
-                    typeof popup.closed === 'undefined'
-                  ) {
-                    window.open(url, '_blank');
+                  if (!popup || popup.closed || typeof popup.closed === "undefined") {
+                    window.open(url, "_blank");
                   } else {
                     popup.location.href = url;
                   }
@@ -76,7 +72,7 @@ export function EchoTopUpButton({ echo }: { echo: EchoContextValue }) {
             ) : (
               <CreditCard className="h-4 w-4 mr-2" />
             )}
-            {isLoading ? 'Processing...' : `Add ${amount} Credits`}
+            {isLoading ? "Processing..." : `Add ${amount} Credits`}
           </Button>
           <Button
             variant="ghost"

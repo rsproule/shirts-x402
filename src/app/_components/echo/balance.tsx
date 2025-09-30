@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { useEcho } from '@merit-systems/echo-next-sdk/client';
-import { useEffect, useState } from 'react';
-import { Button } from '@/components/ui/button';
+import { useEcho } from "@merit-systems/echo-next-sdk/client";
+import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
 
 interface BalanceData {
   balance: number;
@@ -18,14 +18,14 @@ export default function Balance() {
 
   useEffect(() => {
     if (balance) {
-      setBalanceData({ balance: balance.balance || 0, currency: 'USD' });
+      setBalanceData({ balance: balance.balance || 0, currency: "USD" });
       setLoading(false);
     }
   }, [balance]);
 
-  const formatBalance = (amount: number, currency = 'USD') => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
+  const formatBalance = (amount: number, currency = "USD") => {
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
       currency: currency,
       minimumFractionDigits: 0,
       maximumFractionDigits: 2,

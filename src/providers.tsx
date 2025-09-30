@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { EchoProvider } from '@merit-systems/echo-next-sdk/client';
-import { WagmiProvider } from 'wagmi';
-import { config } from './config';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ConnectKitProvider } from 'connectkit';
+import { EchoProvider } from "@merit-systems/echo-next-sdk/client";
+import { WagmiProvider } from "wagmi";
+import { config } from "./config";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ConnectKitProvider } from "connectkit";
 
 const queryClient = new QueryClient();
 

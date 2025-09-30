@@ -1,20 +1,19 @@
-'use client';
+"use client";
 
-import { EchoAccountButtonPopover } from '@/components/echo-popover';
-import { formatCurrency } from '@/lib/currency-utils';
-import { Button } from '@/components/echo-button';
-import { Logo } from '@/components/logo';
-import { Popover, PopoverTrigger } from '@/components/ui/popover';
-import { Skeleton } from '@/components/ui/skeleton';
-import { type EchoContextValue } from '@merit-systems/echo-react-sdk';
-import { Gift, Loader2 } from 'lucide-react';
-import { useState } from 'react';
+import { EchoAccountButtonPopover } from "@/components/echo-popover";
+import { formatCurrency } from "@/lib/currency-utils";
+import { Button } from "@/components/echo-button";
+import { Logo } from "@/components/logo";
+import { Popover, PopoverTrigger } from "@/components/ui/popover";
+import { Skeleton } from "@/components/ui/skeleton";
+import { type EchoContextValue } from "@merit-systems/echo-react-sdk";
+import { Gift, Loader2 } from "lucide-react";
+import { useState } from "react";
 
 export function EchoAccountButton({ echo }: { echo: EchoContextValue }) {
   const { user, balance, freeTierBalance, signIn, isLoading } = echo;
   const [isSigningIn, setIsSigningIn] = useState(false);
-  const totalBalance =
-    (balance?.balance || 0) + (freeTierBalance?.userSpendInfo.amountLeft || 0);
+  const totalBalance = (balance?.balance || 0) + (freeTierBalance?.userSpendInfo.amountLeft || 0);
   const hasFreeCredits = freeTierBalance?.userSpendInfo.amountLeft ?? 0 > 0;
   const buttonContent = isLoading ? (
     <>
@@ -23,14 +22,8 @@ export function EchoAccountButton({ echo }: { echo: EchoContextValue }) {
     </>
   ) : !user ? (
     <div className="flex items-center gap-2">
-      {isSigningIn ? (
-        <Loader2 className="size-3 animate-spin" />
-      ) : (
-        <Logo className="size-5" />
-      )}
-      <span className="text-xs">
-        {isSigningIn ? 'Connecting...' : 'Connect'}
-      </span>
+      {isSigningIn ? <Loader2 className="size-3 animate-spin" /> : <Logo className="size-5" />}
+      <span className="text-xs">{isSigningIn ? "Connecting..." : "Connect"}</span>
     </div>
   ) : (
     <>

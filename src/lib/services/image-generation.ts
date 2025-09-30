@@ -19,9 +19,7 @@ export async function generateShirtTitle(prompt: string): Promise<string> {
 
     // Fallback to simple title generation
     const words = prompt.split(" ").slice(0, 4);
-    const fallbackTitle = words
-      .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-      .join(" ");
+    const fallbackTitle = words.map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
     return fallbackTitle;
   }
 }
@@ -39,9 +37,7 @@ async function generateImageWithGoogle(prompt: string): Promise<string> {
       prompt,
     });
 
-    const imageFile = result.files?.find((file) =>
-      file.mediaType?.startsWith("image/"),
-    );
+    const imageFile = result.files?.find((file) => file.mediaType?.startsWith("image/"));
 
     if (!imageFile || !imageFile.base64) {
       throw new Error("No image data returned from Google Gemini");
@@ -51,9 +47,7 @@ async function generateImageWithGoogle(prompt: string): Promise<string> {
   } catch (error) {
     console.error("[Image Generation] Google error:", error);
     throw new Error(
-      `Google image generation failed: ${
-        error instanceof Error ? error.message : "Unknown error"
-      }`,
+      `Google image generation failed: ${error instanceof Error ? error.message : "Unknown error"}`,
     );
   }
 }
@@ -81,9 +75,7 @@ async function generateImageWithOpenAI(prompt: string): Promise<string> {
   } catch (error) {
     console.error("[Image Generation] OpenAI error:", error);
     throw new Error(
-      `OpenAI image generation failed: ${
-        error instanceof Error ? error.message : "Unknown error"
-      }`,
+      `OpenAI image generation failed: ${error instanceof Error ? error.message : "Unknown error"}`,
     );
   }
 }
@@ -105,10 +97,7 @@ export async function generateShirtImage(
       return await generateImageWithGoogle(prompt);
     }
   } catch (error) {
-    console.error(
-      `[Image Generation] ${provider} failed, using fallback:`,
-      error,
-    );
+    console.error(`[Image Generation] ${provider} failed, using fallback:`, error);
 
     const fallbackImageUrl = `https://via.placeholder.com/1024x1024.png?text=${encodeURIComponent(
       prompt.slice(0, 50),

@@ -1,6 +1,6 @@
-import { createConfig, http } from 'wagmi';
-import { base } from 'wagmi/chains';
-import { getDefaultConfig } from 'connectkit';
+import { createConfig, http } from "wagmi";
+import { base } from "wagmi/chains";
+import { getDefaultConfig } from "connectkit";
 
 export const config = createConfig(
   getDefaultConfig({

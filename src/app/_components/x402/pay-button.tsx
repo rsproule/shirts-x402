@@ -30,11 +30,7 @@ export function PayButton() {
 
   console.log("data:", data);
   console.log("error:", error);
-  const result = error
-    ? JSON.stringify(error, null, 2)
-    : data
-    ? JSON.stringify(data, null, 2)
-    : "";
+  const result = error ? JSON.stringify(error, null, 2) : data ? JSON.stringify(data, null, 2) : "";
 
   return (
     <div className="flex flex-col items-center justify-center h-screen">
@@ -44,9 +40,7 @@ export function PayButton() {
           {isLoading ? "Processing..." : "Pay"}
         </Button>
         {result && (
-          <pre className="p-4 bg-gray-100 rounded text-sm overflow-auto text-center">
-            {result}
-          </pre>
+          <pre className="p-4 bg-gray-100 rounded text-sm overflow-auto text-center">{result}</pre>
         )}
       </div>
     </div>

@@ -22,8 +22,8 @@ const DEFAULT_PRINT_PROVIDER_ID = 99;
 
 // Comfort Colors variant IDs
 const COMFORT_COLORS_VARIANTS = [
-  78994, 73199, 78993, 78962, 78991, 78964, 78961, 78963, 73203, 78992, 73211,
-  73207, 78965, 73215, 78995,
+  78994, 73199, 78993, 78962, 78991, 78964, 78961, 78963, 73203, 78992, 73211, 73207, 78965, 73215,
+  78995,
 ];
 
 /**
@@ -36,9 +36,7 @@ export async function uploadImageToPrintify(imageUrl: string): Promise<string> {
     const printify = getPrintifyClient();
 
     // Extract base64 from data URL if present
-    const base64Data = imageUrl.startsWith("data:")
-      ? imageUrl.split(",")[1]
-      : imageUrl;
+    const base64Data = imageUrl.startsWith("data:") ? imageUrl.split(",")[1] : imageUrl;
 
     const result = await printify.uploads.uploadImage({
       file_name: `shirt-design-${Date.now()}.png`,
@@ -49,9 +47,7 @@ export async function uploadImageToPrintify(imageUrl: string): Promise<string> {
   } catch (error: any) {
     console.error("[Printify] Upload error:", error);
     throw new Error(
-      `Failed to upload image: ${
-        error instanceof Error ? error.message : "Unknown error"
-      }`,
+      `Failed to upload image: ${error instanceof Error ? error.message : "Unknown error"}`,
     );
   }
 }
@@ -66,17 +62,14 @@ export async function uploadImageAndGetUrl(imageUrl: string): Promise<{
   try {
     const printify = getPrintifyClient();
 
-    const base64Data = imageUrl.startsWith("data:")
-      ? imageUrl.split(",")[1]
-      : imageUrl;
+    const base64Data = imageUrl.startsWith("data:") ? imageUrl.split(",")[1] : imageUrl;
 
     const result = await printify.uploads.uploadImage({
       file_name: `shirt-design-${Date.now()}.png`,
       contents: base64Data,
     });
 
-    const previewUrl =
-      result.preview_url || `https://images-api.printify.com/${result.id}`;
+    const previewUrl = result.preview_url || `https://images-api.printify.com/${result.id}`;
 
     return {
       id: result.id,
@@ -85,9 +78,7 @@ export async function uploadImageAndGetUrl(imageUrl: string): Promise<{
   } catch (error: any) {
     console.error("[Printify] Upload error:", error);
     throw new Error(
-      `Failed to upload image: ${
-        error instanceof Error ? error.message : "Unknown error"
-      }`,
+      `Failed to upload image: ${error instanceof Error ? error.message : "Unknown error"}`,
     );
   }
 }
@@ -148,9 +139,7 @@ export async function createPrintifyProduct(params: {
   } catch (error: any) {
     console.error("[Printify] Product creation error:", error);
     throw new Error(
-      `Failed to create product: ${
-        error instanceof Error ? error.message : "Unknown error"
-      }`,
+      `Failed to create product: ${error instanceof Error ? error.message : "Unknown error"}`,
     );
   }
 }
@@ -174,9 +163,7 @@ export async function publishPrintifyProduct(productId: string): Promise<void> {
   } catch (error) {
     console.error("[Printify] Publish error:", error);
     throw new Error(
-      `Failed to publish product: ${
-        error instanceof Error ? error.message : "Unknown error"
-      }`,
+      `Failed to publish product: ${error instanceof Error ? error.message : "Unknown error"}`,
     );
   }
 }
@@ -184,9 +171,7 @@ export async function publishPrintifyProduct(productId: string): Promise<void> {
 /**
  * Get product details from Printify
  */
-export async function getPrintifyProduct(
-  productId: string,
-): Promise<PrintifyProduct> {
+export async function getPrintifyProduct(productId: string): Promise<PrintifyProduct> {
   try {
     const printify = getPrintifyClient();
     const product = await printify.products.getOne(productId);
@@ -194,9 +179,7 @@ export async function getPrintifyProduct(
   } catch (error) {
     console.error("[Printify] Get product error:", error);
     throw new Error(
-      `Failed to get product: ${
-        error instanceof Error ? error.message : "Unknown error"
-      }`,
+      `Failed to get product: ${error instanceof Error ? error.message : "Unknown error"}`,
     );
   }
 }

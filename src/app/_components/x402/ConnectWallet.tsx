@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { ConnectKitButton } from 'connectkit';
+import { ConnectKitButton } from "connectkit";
 
 export const ConnectWallet = () => {
   return <ConnectKitButton showBalance={false} showAvatar={false} />;
