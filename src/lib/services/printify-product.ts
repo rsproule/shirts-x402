@@ -37,13 +37,13 @@ export async function uploadImageToPrintify(imageUrl: string): Promise<string> {
 
     const uploadPayload = imageUrl.startsWith("data:")
       ? {
-          file_name: `shirt-design-${Date.now()}.png`,
-          contents: imageUrl.split(",")[1], // base64 data
-        }
+        file_name: `shirt-design-${Date.now()}.png`,
+        contents: imageUrl.split(",")[1], // base64 data
+      }
       : {
-          file_name: `shirt-design-${Date.now()}.png`,
-          url: imageUrl, // regular URL
-        };
+        file_name: `shirt-design-${Date.now()}.png`,
+        url: imageUrl, // regular URL
+      };
 
     const result = await printify.uploads.uploadImage(uploadPayload);
 
@@ -66,19 +66,15 @@ export async function uploadImageAndGetUrl(imageUrl: string): Promise<{
   try {
     const printify = getPrintifyClient();
 
-<<<<<<< HEAD
     const uploadPayload = imageUrl.startsWith("data:")
       ? {
-          file_name: `shirt-design-${Date.now()}.png`,
-          contents: imageUrl.split(",")[1], // base64 data
-        }
+        file_name: `shirt-design-${Date.now()}.png`,
+        contents: imageUrl.split(",")[1], // base64 data
+      }
       : {
-          file_name: `shirt-design-${Date.now()}.png`,
-          url: imageUrl, // regular URL
-        };
-=======
-    const base64Data = imageUrl.startsWith("data:") ? imageUrl.split(",")[1] : imageUrl;
->>>>>>> master
+        file_name: `shirt-design-${Date.now()}.png`,
+        url: imageUrl, // regular URL
+      };
 
     const result = await printify.uploads.uploadImage(uploadPayload);
 
