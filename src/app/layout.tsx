@@ -40,10 +40,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} flex h-screen flex-col antialiased`}
+        className={`${geistMono.variable} ${geistSans.variable} flex h-screen flex-col antialiased`}
+        style={{ fontFamily: 'var(--font-geist-mono), monospace' }}
       >
         <Providers>
-          <Header title="x402 Shirt" />
+          <Header title="shirt.sh" />
           <div className="min-h-0 flex-1">{children}</div>
         </Providers>
       </body>

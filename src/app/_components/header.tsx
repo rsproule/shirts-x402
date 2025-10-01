@@ -8,11 +8,11 @@ interface HeaderProps {
 
 const Header: FC<HeaderProps> = async ({ title = "My App", className = "" }) => {
   return (
-    <header className={`border-gray-200 border-b bg-white shadow-sm ${className}`}>
+    <header className={`border-b-2 border-foreground bg-background ${className}`}>
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex h-16 items-center justify-between">
+        <div className="flex h-14 items-center justify-between">
           <div className="flex items-center">
-            <h1 className="font-semibold text-gray-900 text-xl">{title}</h1>
+            <h1 className="font-mono font-bold text-foreground text-sm tracking-wider">$ {title}</h1>
           </div>
 
           <nav className="flex items-center space-x-4">
