@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import "../globals.css";
 
 const frame = {
   version: "1",
@@ -36,5 +37,9 @@ export const metadata: Metadata = {
 };
 
 export default function MiniAppLayout({ children }: { children: React.ReactNode }) {
-  return children;
+  return (
+    <html lang="en">
+      <body className="antialiased">{children}</body>
+    </html>
+  );
 }

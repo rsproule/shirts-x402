@@ -7,6 +7,8 @@ import { inputSchemaToX402 } from "./lib/x402-schema";
 
 export const middleware = paymentMiddleware(
   "0xc0541B06F703c6753B842D83cF62d55F93EE81bE",
+  //   "0xc0541B06F703c6753B842D83cF62d55F93EE81bE",
+  // merit("github:sproule/shirt.sh") // x402 payment -> proxy() -> fundRepo() [Escrow.sol]
   {
     "/api/shirts": {
       price: "$25.00",

@@ -6,12 +6,14 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { sdk } from "@farcaster/miniapp-sdk";
 import { useEffect, useState } from "react";
+import { wrapFetchWithPayment, type Signer } from "x402-fetch";
 
 type Mode = "prompt" | "image";
 
 export default function MiniAppPage() {
   const [mode, setMode] = useState<Mode>("prompt");
   const [isReady, setIsReady] = useState(false);
+  const [farcasterWallet, setFarcasterWallet] = useState<any>(null);
   const [imageFile, setImageFile] = useState<string>("");
   const [imageUrl, setImageUrl] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -39,6 +41,10 @@ export default function MiniAppPage() {
       const context = await sdk.context;
       console.log("[Farcaster] Context:", context);
 
+      // Get Farcaster Ethereum provider for x402 payments
+      const provider = sdk.wallet.getEthereumProvider();
+      setFarcasterWallet(provider);
+
       await sdk.actions.ready();
       setIsReady(true);
     };
@@ -48,6 +54,12 @@ export default function MiniAppPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!farcasterWallet) {
+      setError({ error: "Farcaster wallet not ready" });
+      return;
+    }
+
     setIsLoading(true);
     setError(null);
     setResult(null);
@@ -65,6 +77,9 @@ export default function MiniAppPage() {
         city: formData.city,
         zip: formData.zip,
       };
+
+      // Wrap fetch with x402 payment using Farcaster wallet
+      const paymentFetch = wrapFetchWithPayment(fetch, farcasterWallet as unknown as Signer);
 
       const endpoint = mode === "prompt" ? "/api/shirts" : "/api/shirts/from-image";
 
@@ -91,7 +106,7 @@ export default function MiniAppPage() {
         };
       }
 
-      const response = await fetch(endpoint, {
+      const response = await paymentFetch(endpoint, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -132,7 +147,6 @@ export default function MiniAppPage() {
     <div className="min-h-screen p-4 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-950 dark:to-gray-900">
       <div className="max-w-2xl mx-auto space-y-4">
         <div className="text-center space-y-2">
-          <h1 className="text-3xl font-bold tracking-tight">ShirtSlop</h1>
           <p className="text-muted-foreground text-sm">Custom shirts • $25.00</p>
         </div>
 
@@ -232,8 +246,17 @@ export default function MiniAppPage() {
                 </div>
               </div>
 
-              <Button type="submit" disabled={isLoading} className="w-full" size="lg">
-                {isLoading ? "Creating..." : "Create Shirt • $25.00"}
+              <Button
+                type="submit"
+                disabled={!farcasterWallet || isLoading}
+                className="w-full"
+                size="lg"
+              >
+                {!farcasterWallet
+                  ? "Connecting Wallet..."
+                  : isLoading
+                    ? "Creating..."
+                    : "Create Shirt • $25.00"}
               </Button>
             </form>
           </CardContent>
