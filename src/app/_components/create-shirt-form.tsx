@@ -192,6 +192,42 @@ export function CreateShirtForm() {
     }));
   };
 
+  const curlCommand = () => {
+    const addressPayload = {
+      first_name: formData.first_name,
+      last_name: formData.last_name,
+      email: formData.email,
+      phone: formData.phone || undefined,
+      country: formData.country,
+      region: formData.region,
+      address1: formData.address1,
+      address2: formData.address2,
+      city: formData.city,
+      zip: formData.zip,
+    };
+
+    const endpoint = mode === "prompt" ? "/api/shirts" : "/api/shirts/from-image";
+    const payload =
+      mode === "prompt"
+        ? {
+            prompt: formData.prompt,
+            size: formData.size,
+            color: formData.color,
+            address_to: addressPayload,
+          }
+        : {
+            imageUrl: imageFile || imageUrl,
+            size: formData.size,
+            color: formData.color,
+            address_to: addressPayload,
+          };
+
+    return `curl -X POST https://shirt.sh${endpoint} \\
+  -H "Content-Type: application/json" \\
+  -H "X-Payment-Token: <x402_signature>" \\
+  -d '${JSON.stringify(payload, null, 2)}'`;
+  };
+
   return (
     <div className="flex min-h-screen items-center justify-center p-4">
       <div className="w-full max-w-2xl space-y-4">
@@ -200,6 +236,24 @@ export function CreateShirtForm() {
           <p className="text-sm text-muted-foreground tracking-tight">
             $ create-shirt --price 25.00
           </p>
+        </div>
+
+        {/* Curl Command Preview */}
+        <div className="border-2 border-foreground bg-muted p-4">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-xs font-mono font-bold tracking-wider uppercase">
+              [ API_REQUEST ]
+            </span>
+            <button
+              onClick={() => navigator.clipboard.writeText(curlCommand())}
+              className="text-xs font-mono border border-foreground px-2 py-1 hover:bg-foreground hover:text-background transition-colors"
+            >
+              copy
+            </button>
+          </div>
+          <pre className="text-xs font-mono overflow-x-auto text-muted-foreground whitespace-pre-wrap break-all">
+            {curlCommand()}
+          </pre>
         </div>
 
         {/* Main Form Card */}
