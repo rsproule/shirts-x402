@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "ShirtSlop x402",
+  title: "curl shirt.sh",
   description: "AI-powered shirt creator with x402 payments",
 };
 
