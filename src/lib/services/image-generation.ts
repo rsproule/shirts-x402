@@ -1,4 +1,5 @@
-import { google, openai } from "@/echo";
+import { createGoogleGenerativeAI } from "@ai-sdk/google";
+import { createOpenAI } from "@ai-sdk/openai";
 import { experimental_generateImage as generateImage, generateText } from "ai";
 
 /**
@@ -8,6 +9,10 @@ import { experimental_generateImage as generateImage, generateText } from "ai";
  */
 export async function generateShirtTitle(prompt: string): Promise<string> {
   try {
+    const openai = createOpenAI({
+      apiKey: process.env.ECHO_API_KEY!,
+      baseURL: "https://echo.router.merit.systems",
+    });
     const result = await generateText({
       model: openai("gpt-5"),
       prompt: `Generate a short, catchy product title (max 50 characters) for a t-shirt with this design: "${prompt}". Return only the title, nothing else.`,
@@ -32,6 +37,10 @@ export async function generateShirtTitle(prompt: string): Promise<string> {
  */
 async function generateImageWithGoogle(prompt: string): Promise<string> {
   try {
+    const google = createGoogleGenerativeAI({
+      apiKey: process.env.ECHO_API_KEY!,
+      baseURL: "https://echo.router.merit.systems",
+    });
     const result = await generateText({
       model: google("gemini-2.5-flash-image-preview"),
       prompt,
@@ -60,6 +69,10 @@ async function generateImageWithGoogle(prompt: string): Promise<string> {
  */
 async function generateImageWithOpenAI(prompt: string): Promise<string> {
   try {
+    const openai = createOpenAI({
+      apiKey: process.env.ECHO_API_KEY!,
+      baseURL: "https://echo.router.merit.systems",
+    });
     const result = await generateImage({
       model: openai.image("gpt-image-1"),
       prompt,

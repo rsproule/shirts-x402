@@ -1,5 +1,3 @@
-import { EchoAccount } from "@/components/echo-account-next";
-import { isSignedIn } from "@/echo";
 import { ConnectWallet } from "@/app/_components/x402/ConnectWallet";
 import type { FC } from "react";
 
@@ -18,7 +16,6 @@ const Header: FC<HeaderProps> = async ({ title = "My App", className = "" }) => 
           </div>
 
           <nav className="flex items-center space-x-4">
-            <EchoAccount />
             <ConnectWallet />
           </nav>
         </div>

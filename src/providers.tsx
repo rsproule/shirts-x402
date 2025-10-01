@@ -10,12 +10,10 @@ const queryClient = new QueryClient();
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
-    <EchoProvider config={{ appId: process.env.NEXT_PUBLIC_ECHO_APP_ID! }}>
-      <WagmiProvider config={config}>
-        <QueryClientProvider client={queryClient}>
-          <ConnectKitProvider>{children}</ConnectKitProvider>
-        </QueryClientProvider>
-      </WagmiProvider>
-    </EchoProvider>
+    <WagmiProvider config={config}>
+      <QueryClientProvider client={queryClient}>
+        <ConnectKitProvider>{children}</ConnectKitProvider>
+      </QueryClientProvider>
+    </WagmiProvider>
   );
 }
