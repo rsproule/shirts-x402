@@ -1,0 +1,24 @@
+{
+  "accountAssociation": {
+    "header": "REPLACE_WITH_SIGNED_HEADER",
+    "payload": "REPLACE_WITH_SIGNED_PAYLOAD",
+    "signature": "REPLACE_WITH_SIGNED_SIGNATURE"
+  },
+  "frame": {
+    "version": "1",
+    "name": "ShirtSlop",
+    "iconUrl": "https://shirt.sh/shirt.png",
+    "homeUrl": "https://shirt.sh/miniapp",
+    "imageUrl": "https://shirt.sh/shirt.png",
+    "button": {
+      "title": "Create Custom Shirt",
+      "action": {
+        "type": "launch_frame",
+        "name": "ShirtSlop",
+        "url": "https://shirt.sh/miniapp",
+        "splashImageUrl": "https://shirt.sh/shirt.png",
+        "splashBackgroundColor": "#f7f7f7"
+      }
+    }
+  }
+}
