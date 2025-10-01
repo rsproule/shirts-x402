@@ -15,10 +15,10 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "curl shirt.sh",
+  title: "shirt.sh",
   description: "AI-powered shirt creator with x402 payments",
   openGraph: {
-    title: "curl shirt.sh",
+    title: "shirt.sh",
     description: "AI-powered shirt creator with x402 payments",
     // For OG images, use an absolute URL, not a relative path
     images: [
