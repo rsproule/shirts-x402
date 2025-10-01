@@ -17,6 +17,19 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "curl shirt.sh",
   description: "AI-powered shirt creator with x402 payments",
+  openGraph: {
+    title: "curl shirt.sh",
+    description: "AI-powered shirt creator with x402 payments",
+    // For OG images, use an absolute URL, not a relative path
+    images: [
+      {
+        url: "https://shirt.sh/shirt.png",
+        width: 1200,
+        height: 630,
+        alt: "Shirt.sh preview",
+      },
+    ],
+  },
 };
 
 export default function RootLayout({
