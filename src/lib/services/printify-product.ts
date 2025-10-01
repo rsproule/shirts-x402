@@ -35,13 +35,17 @@ export async function uploadImageToPrintify(imageUrl: string): Promise<string> {
   try {
     const printify = getPrintifyClient();
 
-    // Extract base64 from data URL if present
-    const base64Data = imageUrl.startsWith("data:") ? imageUrl.split(",")[1] : imageUrl;
+    const uploadPayload = imageUrl.startsWith("data:")
+      ? {
+        file_name: `shirt-design-${Date.now()}.png`,
+        contents: imageUrl.split(",")[1], // base64 data
+      }
+      : {
+        file_name: `shirt-design-${Date.now()}.png`,
+        url: imageUrl, // regular URL
+      };
 
-    const result = await printify.uploads.uploadImage({
-      file_name: `shirt-design-${Date.now()}.png`,
-      contents: base64Data,
-    });
+    const result = await printify.uploads.uploadImage(uploadPayload);
 
     return result.id;
   } catch (error: any) {
@@ -62,12 +66,17 @@ export async function uploadImageAndGetUrl(imageUrl: string): Promise<{
   try {
     const printify = getPrintifyClient();
 
-    const base64Data = imageUrl.startsWith("data:") ? imageUrl.split(",")[1] : imageUrl;
+    const uploadPayload = imageUrl.startsWith("data:")
+      ? {
+        file_name: `shirt-design-${Date.now()}.png`,
+        contents: imageUrl.split(",")[1], // base64 data
+      }
+      : {
+        file_name: `shirt-design-${Date.now()}.png`,
+        url: imageUrl, // regular URL
+      };
 
-    const result = await printify.uploads.uploadImage({
-      file_name: `shirt-design-${Date.now()}.png`,
-      contents: base64Data,
-    });
+    const result = await printify.uploads.uploadImage(uploadPayload);
 
     const previewUrl = result.preview_url || `https://images-api.printify.com/${result.id}`;
 

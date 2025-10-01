@@ -27,7 +27,7 @@ export const CreateShirtBody = z.object({
 export const ShirtJob = z.object({
   id: z.string().uuid(),
   status: z.enum(["queued", "processing", "failed", "completed"]),
-  imageUrl: z.string().url().optional(),
+  imageUrl: z.string().optional().describe("HTTP/HTTPS URL or base64 data URL (data:image/...)"),
   productId: z.string().optional(),
   orderId: z.string().optional(),
   trackingInfo: z
