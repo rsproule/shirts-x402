@@ -34,4 +34,5 @@ export const middleware = paymentMiddleware(
 
 export const config = {
   matcher: ["/api/shirts/:path*"],
+  runtime: "nodejs", // Required for @coinbase/x402 until Edge support is added
 };
