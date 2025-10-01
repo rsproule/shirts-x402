@@ -1,17 +1,17 @@
-'use client';
+"use client";
 
-import { useChat } from '@ai-sdk/react';
-import { CopyIcon, MessageSquare } from 'lucide-react';
-import { Fragment, useState } from 'react';
-import { Action, Actions } from '@/components/ai-elements/actions';
+import { useChat } from "@ai-sdk/react";
+import { CopyIcon, MessageSquare } from "lucide-react";
+import { Fragment, useState } from "react";
+import { Action, Actions } from "@/components/ai-elements/actions";
 import {
   Conversation,
   ConversationContent,
   ConversationEmptyState,
   ConversationScrollButton,
-} from '@/components/ai-elements/conversation';
-import { Loader } from '@/components/ai-elements/loader';
-import { Message, MessageContent } from '@/components/ai-elements/message';
+} from "@/components/ai-elements/conversation";
+import { Loader } from "@/components/ai-elements/loader";
+import { Message, MessageContent } from "@/components/ai-elements/message";
 import {
   PromptInput,
   PromptInputModelSelect,
@@ -23,40 +23,31 @@ import {
   PromptInputTextarea,
   PromptInputToolbar,
   PromptInputTools,
-} from '@/components/ai-elements/prompt-input';
-import {
-  Reasoning,
-  ReasoningContent,
-  ReasoningTrigger,
-} from '@/components/ai-elements/reasoning';
-import { Response } from '@/components/ai-elements/response';
-import {
-  Source,
-  Sources,
-  SourcesContent,
-  SourcesTrigger,
-} from '@/components/ai-elements/sources';
-import { Suggestion, Suggestions } from '@/components/ai-elements/suggestion';
+} from "@/components/ai-elements/prompt-input";
+import { Reasoning, ReasoningContent, ReasoningTrigger } from "@/components/ai-elements/reasoning";
+import { Response } from "@/components/ai-elements/response";
+import { Source, Sources, SourcesContent, SourcesTrigger } from "@/components/ai-elements/sources";
+import { Suggestion, Suggestions } from "@/components/ai-elements/suggestion";
 
 const models = [
   {
-    name: 'GPT 4o',
-    value: 'gpt-4o',
+    name: "GPT 4o",
+    value: "gpt-4o",
   },
   {
-    name: 'GPT 5',
-    value: 'gpt-5',
+    name: "GPT 5",
+    value: "gpt-5",
   },
 ];
 
 const suggestions = [
-  'Can you explain how to play tennis?',
-  'Write me a code snippet of how to use the vercel ai sdk to create a chatbot',
-  'How do I make a really good fish taco?',
+  "Can you explain how to play tennis?",
+  "Write me a code snippet of how to use the vercel ai sdk to create a chatbot",
+  "How do I make a really good fish taco?",
 ];
 
 const ChatBotDemo = () => {
-  const [input, setInput] = useState('');
+  const [input, setInput] = useState("");
   const [model, setModel] = useState<string>(models[0].value);
   const { messages, sendMessage, status } = useChat();
 
@@ -69,9 +60,9 @@ const ChatBotDemo = () => {
           body: {
             model: model,
           },
-        }
+        },
       );
-      setInput('');
+      setInput("");
     }
   };
 
@@ -82,7 +73,7 @@ const ChatBotDemo = () => {
         body: {
           model: model,
         },
-      }
+      },
     );
   };
 
@@ -98,66 +89,52 @@ const ChatBotDemo = () => {
                 description="Start a conversation to see messages here"
               />
             ) : (
-              messages.map(message => (
+              messages.map((message) => (
                 <div key={message.id}>
-                  {message.role === 'assistant' &&
-                    message.parts.filter(part => part.type === 'source-url')
-                      .length > 0 && (
+                  {message.role === "assistant" &&
+                    message.parts.filter((part) => part.type === "source-url").length > 0 && (
                       <Sources>
                         <SourcesTrigger
-                          count={
-                            message.parts.filter(
-                              part => part.type === 'source-url'
-                            ).length
-                          }
+                          count={message.parts.filter((part) => part.type === "source-url").length}
                         />
                         {message.parts
-                          .filter(part => part.type === 'source-url')
+                          .filter((part) => part.type === "source-url")
                           .map((part, i) => (
                             <SourcesContent key={`${message.id}-${i}`}>
-                              <Source
-                                key={`${message.id}-${i}`}
-                                href={part.url}
-                                title={part.url}
-                              />
+                              <Source key={`${message.id}-${i}`} href={part.url} title={part.url} />
                             </SourcesContent>
                           ))}
                       </Sources>
                     )}
                   {message.parts.map((part, i) => {
                     switch (part.type) {
-                      case 'text':
+                      case "text":
                         return (
                           <Fragment key={`${message.id}-${i}`}>
                             <Message from={message.role}>
                               <MessageContent>
-                                <Response key={`${message.id}-${i}`}>
-                                  {part.text}
-                                </Response>
+                                <Response key={`${message.id}-${i}`}>{part.text}</Response>
                               </MessageContent>
                             </Message>
-                            {message.role === 'assistant' &&
-                              i === messages.length - 1 && (
-                                <Actions className="mt-2">
-                                  <Action
-                                    onClick={() =>
-                                      navigator.clipboard.writeText(part.text)
-                                    }
-                                    label="Copy"
-                                  >
-                                    <CopyIcon className="size-3" />
-                                  </Action>
-                                </Actions>
-                              )}
+                            {message.role === "assistant" && i === messages.length - 1 && (
+                              <Actions className="mt-2">
+                                <Action
+                                  onClick={() => navigator.clipboard.writeText(part.text)}
+                                  label="Copy"
+                                >
+                                  <CopyIcon className="size-3" />
+                                </Action>
+                              </Actions>
+                            )}
                           </Fragment>
                         );
-                      case 'reasoning':
+                      case "reasoning":
                         return (
                           <Reasoning
                             key={`${message.id}-${i}`}
                             className="w-full"
                             isStreaming={
-                              status === 'streaming' &&
+                              status === "streaming" &&
                               i === message.parts.length - 1 &&
                               message.id === messages.at(-1)?.id
                             }
@@ -173,29 +150,22 @@ const ChatBotDemo = () => {
                 </div>
               ))
             )}
-            {status === 'submitted' && <Loader />}
+            {status === "submitted" && <Loader />}
           </ConversationContent>
           <ConversationScrollButton />
         </Conversation>
         <Suggestions>
-          {suggestions.map(suggestion => (
-            <Suggestion
-              key={suggestion}
-              onClick={handleSuggestionClick}
-              suggestion={suggestion}
-            />
+          {suggestions.map((suggestion) => (
+            <Suggestion key={suggestion} onClick={handleSuggestionClick} suggestion={suggestion} />
           ))}
         </Suggestions>
 
         <PromptInput onSubmit={handleSubmit} className="mt-4 flex-shrink-0">
-          <PromptInputTextarea
-            onChange={e => setInput(e.target.value)}
-            value={input}
-          />
+          <PromptInputTextarea onChange={(e) => setInput(e.target.value)} value={input} />
           <PromptInputToolbar>
             <PromptInputTools>
               <PromptInputModelSelect
-                onValueChange={value => {
+                onValueChange={(value) => {
                   setModel(value);
                 }}
                 value={model}
@@ -204,11 +174,8 @@ const ChatBotDemo = () => {
                   <PromptInputModelSelectValue />
                 </PromptInputModelSelectTrigger>
                 <PromptInputModelSelectContent>
-                  {models.map(model => (
-                    <PromptInputModelSelectItem
-                      key={model.value}
-                      value={model.value}
-                    >
+                  {models.map((model) => (
+                    <PromptInputModelSelectItem key={model.value} value={model.value}>
                       {model.name}
                     </PromptInputModelSelectItem>
                   ))}

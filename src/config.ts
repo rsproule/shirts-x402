@@ -1,6 +1,6 @@
-import { createConfig, http } from 'wagmi';
-import { base } from 'wagmi/chains';
-import { getDefaultConfig } from 'connectkit';
+import { createConfig, http } from "wagmi";
+import { base } from "wagmi/chains";
+import { getDefaultConfig } from "connectkit";
 
 export const config = createConfig(
   getDefaultConfig({
@@ -9,8 +9,8 @@ export const config = createConfig(
       [base.id]: http(),
     },
     walletConnectProjectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID!,
-    appName: "X402 Chat",
-    appDescription: "X402 Chat Application",
-    appUrl: "https://x402-chat.com",
+    appName: "Shirt.sh",
+    appDescription: "Shirt.sh Application",
+    appUrl: "https://shirt.sh",
   }),
 );

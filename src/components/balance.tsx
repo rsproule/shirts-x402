@@ -1,12 +1,7 @@
-import { formatCurrency } from '@/lib/currency-utils';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
-import { type EchoContextValue } from '@merit-systems/echo-react-sdk';
-import { Gift } from 'lucide-react';
+import { formatCurrency } from "@/lib/currency-utils";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { type EchoContextValue } from "@merit-systems/echo-react-sdk";
+import { Gift } from "lucide-react";
 
 export default function EchoBalance({ echo }: { echo: EchoContextValue }) {
   const { balance, freeTierBalance } = echo;
@@ -19,9 +14,7 @@ export default function EchoBalance({ echo }: { echo: EchoContextValue }) {
     <div className="p-4">
       <div className="space-y-1 flex flex-col items-center">
         <div className="flex flex-col items-center gap-1">
-          <div className="text-2xl font-semibold">
-            {formatCurrency(totalBalance)}
-          </div>
+          <div className="text-2xl font-semibold">{formatCurrency(totalBalance)}</div>
           {hasFreeCredits && (
             <div className="flex items-center gap-1 text-sm text-muted-foreground">
               <span>{formatCurrency(balance?.balance || 0)}</span>

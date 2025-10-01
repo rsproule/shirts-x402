@@ -1,7 +1,7 @@
-import Image from 'next/image';
-import React from 'react';
+import Image from "next/image";
+import React from "react";
 
-import { cn } from '@/lib/utils';
+import { cn } from "@/lib/utils";
 
 interface LogoProps extends React.HTMLAttributes<HTMLDivElement> {
   className?: string;
@@ -12,18 +12,13 @@ interface LogoProps extends React.HTMLAttributes<HTMLDivElement> {
 export const Logo = React.forwardRef<HTMLDivElement, LogoProps>(
   ({ className, containerClassName, onClick, priority, ...props }, ref) => {
     return (
-      <div
-        ref={ref}
-        onClick={onClick}
-        className={containerClassName}
-        {...props}
-      >
+      <div ref={ref} onClick={onClick} className={containerClassName} {...props}>
         <Image
           src="/logo/light.svg"
           alt="Merit Systems Logo"
           width={200}
           height={200}
-          className={cn('dark:hidden size-6', className)}
+          className={cn("dark:hidden size-6", className)}
           priority={priority}
         />
         <Image
@@ -31,12 +26,12 @@ export const Logo = React.forwardRef<HTMLDivElement, LogoProps>(
           alt="Merit Systems Logo"
           width={200}
           height={200}
-          className={cn('hidden dark:block size-6', className)}
+          className={cn("hidden dark:block size-6", className)}
           priority={priority}
         />
       </div>
     );
-  }
+  },
 );
 
-Logo.displayName = 'Logo';
+Logo.displayName = "Logo";

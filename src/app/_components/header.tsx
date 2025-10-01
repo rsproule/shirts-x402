@@ -1,5 +1,3 @@
-import { EchoAccount } from "@/components/echo-account-next";
-import { isSignedIn } from "@/echo";
 import { ConnectWallet } from "@/app/_components/x402/ConnectWallet";
 import type { FC } from "react";
 
@@ -8,14 +6,9 @@ interface HeaderProps {
   className?: string;
 }
 
-const Header: FC<HeaderProps> = async ({
-  title = "My App",
-  className = "",
-}) => {
+const Header: FC<HeaderProps> = async ({ title = "My App", className = "" }) => {
   return (
-    <header
-      className={`border-gray-200 border-b bg-white shadow-sm ${className}`}
-    >
+    <header className={`border-gray-200 border-b bg-white shadow-sm ${className}`}>
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           <div className="flex items-center">
@@ -23,7 +16,6 @@ const Header: FC<HeaderProps> = async ({
           </div>
 
           <nav className="flex items-center space-x-4">
-            <EchoAccount />
             <ConnectWallet />
           </nav>
         </div>

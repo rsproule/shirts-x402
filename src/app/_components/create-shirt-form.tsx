@@ -1,20 +1,10 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  type TCreateShirt,
-  type TShirtJob,
-  CreateShirtBody,
-} from "@/lib/contracts/shirt";
+import { type TCreateShirt, type TShirtJob, CreateShirtBody } from "@/lib/contracts/shirt";
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { useWalletClient } from "wagmi";
@@ -172,15 +162,7 @@ export function CreateShirtForm() {
       // Prompt-based creation
       const payload: TCreateShirt = {
         prompt: formData.prompt,
-        size: formData.size as
-          | "S"
-          | "M"
-          | "L"
-          | "XL"
-          | "2XL"
-          | "3XL"
-          | "4XL"
-          | "5XL",
+        size: formData.size as "S" | "M" | "L" | "XL" | "2XL" | "3XL" | "4XL" | "5XL",
         color: formData.color as "Black" | "White",
         address_to: addressPayload,
       };
@@ -203,9 +185,7 @@ export function CreateShirtForm() {
     }
   };
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData((prev) => ({
       ...prev,
       [e.target.name]: e.target.value,
@@ -273,9 +253,7 @@ export function CreateShirtForm() {
                     rows={3}
                     className="resize-none"
                   />
-                  <p className="text-xs text-muted-foreground">
-                    10-4000 characters
-                  </p>
+                  <p className="text-xs text-muted-foreground">10-4000 characters</p>
                 </div>
               ) : (
                 <div className="space-y-4">
@@ -300,9 +278,7 @@ export function CreateShirtForm() {
                         <div className="text-muted-foreground">
                           Drag & drop, paste, or click to upload
                         </div>
-                        <div className="text-xs text-muted-foreground">
-                          Supports PNG, JPG, GIF
-                        </div>
+                        <div className="text-xs text-muted-foreground">Supports PNG, JPG, GIF</div>
                       </div>
                     </label>
                   </div>
@@ -337,19 +313,14 @@ export function CreateShirtForm() {
               {/* Size and Color Selection */}
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <label
-                    htmlFor="size"
-                    className="text-sm font-medium leading-none"
-                  >
+                  <label htmlFor="size" className="text-sm font-medium leading-none">
                     Size
                   </label>
                   <select
                     id="size"
                     name="size"
                     value={formData.size}
-                    onChange={(e) =>
-                      setFormData((prev) => ({ ...prev, size: e.target.value }))
-                    }
+                    onChange={(e) => setFormData((prev) => ({ ...prev, size: e.target.value }))}
                     className="w-full p-2 border rounded-md bg-background"
                   >
                     <option value="S">Small</option>
@@ -363,10 +334,7 @@ export function CreateShirtForm() {
                   </select>
                 </div>
                 <div className="space-y-2">
-                  <label
-                    htmlFor="color"
-                    className="text-sm font-medium leading-none"
-                  >
+                  <label htmlFor="color" className="text-sm font-medium leading-none">
                     Color
                   </label>
                   <select
@@ -393,9 +361,7 @@ export function CreateShirtForm() {
                   <span className="w-full border-t" />
                 </div>
                 <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-background px-2 text-muted-foreground">
-                    Shipping Details
-                  </span>
+                  <span className="bg-background px-2 text-muted-foreground">Shipping Details</span>
                 </div>
               </div>
 
@@ -415,16 +381,10 @@ export function CreateShirtForm() {
                       <p className="text-sm text-muted-foreground">
                         {formData.city}, {formData.region} {formData.zip}
                       </p>
-                      <p className="text-sm text-muted-foreground">
-                        {formData.country}
-                      </p>
-                      <p className="text-sm text-muted-foreground">
-                        {formData.email}
-                      </p>
+                      <p className="text-sm text-muted-foreground">{formData.country}</p>
+                      <p className="text-sm text-muted-foreground">{formData.email}</p>
                       {formData.phone && (
-                        <p className="text-sm text-muted-foreground">
-                          {formData.phone}
-                        </p>
+                        <p className="text-sm text-muted-foreground">{formData.phone}</p>
                       )}
                     </div>
                     <Button
@@ -443,10 +403,7 @@ export function CreateShirtForm() {
                   {/* Name Fields */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <label
-                        htmlFor="first_name"
-                        className="text-sm font-medium leading-none"
-                      >
+                      <label htmlFor="first_name" className="text-sm font-medium leading-none">
                         First Name
                       </label>
                       <Input
@@ -459,10 +416,7 @@ export function CreateShirtForm() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <label
-                        htmlFor="last_name"
-                        className="text-sm font-medium leading-none"
-                      >
+                      <label htmlFor="last_name" className="text-sm font-medium leading-none">
                         Last Name
                       </label>
                       <Input
@@ -479,10 +433,7 @@ export function CreateShirtForm() {
                   {/* Contact Fields */}
                   <div className="space-y-4">
                     <div className="space-y-2">
-                      <label
-                        htmlFor="email"
-                        className="text-sm font-medium leading-none"
-                      >
+                      <label htmlFor="email" className="text-sm font-medium leading-none">
                         Email
                       </label>
                       <Input
@@ -496,14 +447,8 @@ export function CreateShirtForm() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <label
-                        htmlFor="phone"
-                        className="text-sm font-medium leading-none"
-                      >
-                        Phone{" "}
-                        <span className="text-muted-foreground">
-                          (Optional)
-                        </span>
+                      <label htmlFor="phone" className="text-sm font-medium leading-none">
+                        Phone <span className="text-muted-foreground">(Optional)</span>
                       </label>
                       <Input
                         id="phone"
@@ -519,10 +464,7 @@ export function CreateShirtForm() {
                   {/* Address Fields */}
                   <div className="space-y-4">
                     <div className="space-y-2">
-                      <label
-                        htmlFor="address1"
-                        className="text-sm font-medium leading-none"
-                      >
+                      <label htmlFor="address1" className="text-sm font-medium leading-none">
                         Street Address
                       </label>
                       <Input
@@ -535,14 +477,9 @@ export function CreateShirtForm() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <label
-                        htmlFor="address2"
-                        className="text-sm font-medium leading-none"
-                      >
+                      <label htmlFor="address2" className="text-sm font-medium leading-none">
                         Apartment, suite, etc.{" "}
-                        <span className="text-muted-foreground">
-                          (Optional)
-                        </span>
+                        <span className="text-muted-foreground">(Optional)</span>
                       </label>
                       <Input
                         id="address2"
@@ -557,10 +494,7 @@ export function CreateShirtForm() {
                   {/* City, Region, Zip */}
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div className="space-y-2">
-                      <label
-                        htmlFor="city"
-                        className="text-sm font-medium leading-none"
-                      >
+                      <label htmlFor="city" className="text-sm font-medium leading-none">
                         City
                       </label>
                       <Input
@@ -573,10 +507,7 @@ export function CreateShirtForm() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <label
-                        htmlFor="region"
-                        className="text-sm font-medium leading-none"
-                      >
+                      <label htmlFor="region" className="text-sm font-medium leading-none">
                         State/Region
                       </label>
                       <Input
@@ -588,10 +519,7 @@ export function CreateShirtForm() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <label
-                        htmlFor="zip"
-                        className="text-sm font-medium leading-none"
-                      >
+                      <label htmlFor="zip" className="text-sm font-medium leading-none">
                         ZIP Code
                       </label>
                       <Input
@@ -607,10 +535,7 @@ export function CreateShirtForm() {
 
                   {/* Country */}
                   <div className="space-y-2">
-                    <label
-                      htmlFor="country"
-                      className="text-sm font-medium leading-none"
-                    >
+                    <label htmlFor="country" className="text-sm font-medium leading-none">
                       Country Code
                     </label>
                     <Input
@@ -689,9 +614,7 @@ export function CreateShirtForm() {
         </Card>
 
         {/* Success Result */}
-        {((mode === "prompt" &&
-          createShirtMutation.isSuccess &&
-          createShirtMutation.data) ||
+        {((mode === "prompt" && createShirtMutation.isSuccess && createShirtMutation.data) ||
           (mode === "image" &&
             createShirtFromImageMutation.isSuccess &&
             createShirtFromImageMutation.data)) && (
@@ -700,16 +623,12 @@ export function CreateShirtForm() {
               <CardTitle className="text-green-900 dark:text-green-100">
                 ✓ Shirt Created Successfully!
               </CardTitle>
-              <CardDescription>
-                Your custom shirt has been created and ordered
-              </CardDescription>
+              <CardDescription>Your custom shirt has been created and ordered</CardDescription>
             </CardHeader>
             <CardContent>
               {(() => {
                 const data =
-                  mode === "prompt"
-                    ? createShirtMutation.data
-                    : createShirtFromImageMutation.data;
+                  mode === "prompt" ? createShirtMutation.data : createShirtFromImageMutation.data;
                 if (!data) return null;
 
                 return (
@@ -720,15 +639,11 @@ export function CreateShirtForm() {
                     </div>
                     <div className="flex items-center justify-between text-sm">
                       <span className="text-muted-foreground">Status:</span>
-                      <span className="font-medium capitalize">
-                        {data.status}
-                      </span>
+                      <span className="font-medium capitalize">{data.status}</span>
                     </div>
                     {data.imageUrl && (
                       <div className="space-y-2">
-                        <span className="text-muted-foreground text-sm">
-                          Design:
-                        </span>
+                        <span className="text-muted-foreground text-sm">Design:</span>
                         <img
                           src={data.imageUrl}
                           alt="Shirt design"
@@ -738,20 +653,14 @@ export function CreateShirtForm() {
                     )}
                     {data.productId && (
                       <div className="flex items-center justify-between text-sm">
-                        <span className="text-muted-foreground">
-                          Product ID:
-                        </span>
-                        <code className="font-mono text-xs">
-                          {data.productId}
-                        </code>
+                        <span className="text-muted-foreground">Product ID:</span>
+                        <code className="font-mono text-xs">{data.productId}</code>
                       </div>
                     )}
                     {data.orderId && (
                       <div className="flex items-center justify-between text-sm">
                         <span className="text-muted-foreground">Order ID:</span>
-                        <code className="font-mono text-xs">
-                          {data.orderId}
-                        </code>
+                        <code className="font-mono text-xs">{data.orderId}</code>
                       </div>
                     )}
                   </div>
@@ -762,13 +671,10 @@ export function CreateShirtForm() {
         )}
 
         {/* Error Result */}
-        {(createShirtMutation.isError ||
-          createShirtFromImageMutation.isError) && (
+        {(createShirtMutation.isError || createShirtFromImageMutation.isError) && (
           <Card className="border-red-500 bg-red-50 dark:bg-red-950">
             <CardHeader>
-              <CardTitle className="text-red-900 dark:text-red-100">
-                ✕ Error
-              </CardTitle>
+              <CardTitle className="text-red-900 dark:text-red-100">✕ Error</CardTitle>
               <CardDescription>
                 {(
                   (mode === "prompt"

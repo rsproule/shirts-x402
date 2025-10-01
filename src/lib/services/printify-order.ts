@@ -67,9 +67,7 @@ export async function getVariantIdByOptions(params: {
 // Initialize Printify SDK for order operations
 const getPrintifyOrderClient = () => {
   if (!PRINTIFY_ORDER_API_KEY || !PRINTIFY_ORDER_SHOP_ID) {
-    throw new Error(
-      "PRINTIFY_ORDER_API_KEY and PRINTIFY_ORDER_SHOP_ID must be set",
-    );
+    throw new Error("PRINTIFY_ORDER_API_KEY and PRINTIFY_ORDER_SHOP_ID must be set");
   }
 
   return new Printify({
@@ -118,9 +116,7 @@ export async function createPrintifyOrder(params: {
   } catch (error: any) {
     console.error("[Printify] Order error:", error);
     throw new Error(
-      `Failed to create order: ${
-        error instanceof Error ? error.message : "Unknown error"
-      }`,
+      `Failed to create order: ${error instanceof Error ? error.message : "Unknown error"}`,
     );
   }
 }
@@ -144,9 +140,7 @@ export async function createDirectPrintifyOrder(params: {
 
     // Step 1: Upload image to Printify (reuse shared upload function)
     const { uploadImageAndGetUrl } = await import("./printify-product");
-    const { previewUrl: printifyImageUrl } = await uploadImageAndGetUrl(
-      params.imageUrl,
-    );
+    const { previewUrl: printifyImageUrl } = await uploadImageAndGetUrl(params.imageUrl);
 
     // Determine variant ID
     let variantId: number;
@@ -225,9 +219,7 @@ export async function createDirectPrintifyOrder(params: {
   } catch (error: any) {
     console.error("[Printify] Direct order error:", error);
     throw new Error(
-      `Failed to create direct order: ${
-        error instanceof Error ? error.message : "Unknown error"
-      }`,
+      `Failed to create direct order: ${error instanceof Error ? error.message : "Unknown error"}`,
     );
   }
 }
