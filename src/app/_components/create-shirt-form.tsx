@@ -238,26 +238,8 @@ export function CreateShirtForm() {
           </p>
         </div>
 
-        {/* Curl Command Preview */}
-        <div className="border-2 border-foreground bg-muted p-4">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-mono font-bold tracking-wider uppercase">
-              [ API_REQUEST ]
-            </span>
-            <button
-              onClick={() => navigator.clipboard.writeText(curlCommand())}
-              className="text-xs font-mono border border-foreground px-2 py-1 hover:bg-foreground hover:text-background transition-colors"
-            >
-              copy
-            </button>
-          </div>
-          <pre className="text-xs font-mono overflow-x-auto text-muted-foreground whitespace-pre-wrap break-all">
-            {curlCommand()}
-          </pre>
-        </div>
-
         {/* Main Form Card */}
-        <Card className="border-2 border-foreground shadow-none">
+        <Card className="border-2 border-foreground shadow-[8px_8px_0px_0px_rgba(0,0,0,0.1)] dark:shadow-[8px_8px_0px_0px_rgba(0,0,0,0.5)]">
           <CardContent className="p-6">
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Mode Toggle */}
@@ -423,7 +405,7 @@ export function CreateShirtForm() {
               {/* Address Section - Collapsed or Expanded */}
               {!isEditingAddress ? (
                 // Collapsed View
-                <div className="p-4 bg-muted border-2 border-foreground space-y-2">
+                <div className="p-4 bg-muted border-2 border-foreground space-y-2 shadow-[4px_4px_0px_0px_rgba(0,0,0,0.1)] dark:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.3)]">
                   <div className="flex items-start justify-between">
                     <div className="space-y-1 text-xs font-mono">
                       <p className="font-bold">
@@ -630,6 +612,35 @@ export function CreateShirtForm() {
                 </div>
               )}
 
+              {/* Divider */}
+              <div className="relative my-6">
+                <div className="absolute inset-0 flex items-center">
+                  <span className="w-full border-t-2 border-foreground" />
+                </div>
+                <div className="relative flex justify-center text-xs uppercase tracking-widest">
+                  <span className="bg-background px-3 text-foreground font-mono font-bold">[ REQUEST ]</span>
+                </div>
+              </div>
+
+              {/* Curl Command Preview */}
+              <div className="border-2 border-foreground bg-muted p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,0.1)] dark:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.3)]">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs font-mono font-bold tracking-wider uppercase">
+                    [ API_REQUEST ]
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => navigator.clipboard.writeText(curlCommand())}
+                    className="text-xs font-mono border border-foreground px-2 py-1 hover:bg-foreground hover:text-background transition-colors"
+                  >
+                    copy
+                  </button>
+                </div>
+                <pre className="text-xs font-mono overflow-x-auto text-muted-foreground whitespace-pre-wrap break-all">
+                  {curlCommand()}
+                </pre>
+              </div>
+
               {/* Submit Button */}
               <Button
                 type="submit"
@@ -689,7 +700,7 @@ export function CreateShirtForm() {
           (mode === "image" &&
             createShirtFromImageMutation.isSuccess &&
             createShirtFromImageMutation.data)) && (
-          <Card className="border-2 border-foreground bg-muted shadow-none">
+          <Card className="border-2 border-foreground bg-muted shadow-[8px_8px_0px_0px_rgba(0,0,0,0.1)] dark:shadow-[8px_8px_0px_0px_rgba(0,0,0,0.5)]">
             <CardHeader>
               <CardTitle className="text-foreground font-mono text-sm tracking-wide">
                 [SUCCESS] SHIRT_CREATED
@@ -743,7 +754,7 @@ export function CreateShirtForm() {
 
         {/* Error Result */}
         {(createShirtMutation.isError || createShirtFromImageMutation.isError) && (
-          <Card className="border-2 border-foreground bg-muted shadow-none">
+          <Card className="border-2 border-foreground bg-muted shadow-[8px_8px_0px_0px_rgba(0,0,0,0.1)] dark:shadow-[8px_8px_0px_0px_rgba(0,0,0,0.5)]">
             <CardHeader>
               <CardTitle className="text-foreground font-mono text-sm tracking-wide">[ERROR] REQUEST_FAILED</CardTitle>
               <CardDescription className="font-mono text-xs">

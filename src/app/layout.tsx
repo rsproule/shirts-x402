@@ -38,7 +38,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className="dark">
       <body
         className={`${geistMono.variable} ${geistSans.variable} flex h-screen flex-col antialiased`}
         style={{ fontFamily: 'var(--font-geist-mono), monospace' }}
